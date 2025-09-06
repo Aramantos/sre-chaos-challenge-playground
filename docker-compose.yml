@@ -1,0 +1,33 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:0.10.0
+    command: -nginx.scrape-uri http://web/stub_status
+    depends_on:
+      - web
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - web
+      - nginx-exporter
+
+  grafana:
+    image: grafana/grafana:8.2.2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  load-generator:
+    build: ./load-generator
+    depends_on:
+      - web
