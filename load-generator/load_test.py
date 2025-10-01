@@ -13,11 +13,13 @@ def send_request(url):
     except requests.exceptions.RequestException as e:
         print(f"Request to {url} failed: {e}")
 
+import os
+
 def main():
     """Main function to parse arguments and run the load test."""
     parser = argparse.ArgumentParser(description="Simple load testing script.")
-    parser.add_argument("url", nargs='?', default="http://url-anvil:8080", help="The URL to send requests to. Defaults to http://url-anvil:8080.")
-    parser.add_argument("request_count", type=int, help="The number of requests to send.")
+    parser.add_argument("--url", default=os.getenv('TARGET_URL', 'http://url-anvil:8080'), help="The URL to send requests to. Configurable via TARGET_URL env var.")
+    parser.add_argument("--request-count", type=int, default=int(os.getenv('REQUEST_COUNT', 10)), help="The number of requests to send. Configurable via REQUEST_COUNT env var.")
     args = parser.parse_args()
 
     print(f"Starting load test with {args.request_count} requests to {args.url}")
