@@ -1,2 +1,11 @@
 [
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  }
 ]

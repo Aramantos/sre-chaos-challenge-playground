@@ -24,6 +24,27 @@ services:
     networks:
       - default
 
+  tracking-service:
+    build: ./tracking-service
+    image: sre-chaos-challenge-tracking-service:latest
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "3002:3002"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3002/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+
   frontend:
     build:
       context: ./frontend/leaderboard-app
@@ -86,8 +107,11 @@ services:
       API_KEY: ${API_KEY}
       INFLUENCER_USER: ${INFLUENCER_USER}
       BACKEND_URL: http://backend:3001
+      TRACKING_SERVICE_URL: http://tracking-service:3002/api/track
     depends_on:
       url-anvil:
+        condition: service_healthy
+      tracking-service:
         condition: service_healthy
     networks:
       - default
