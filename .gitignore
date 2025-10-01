@@ -40,7 +40,5 @@ test_scripts/
 
 /contributors/one
 /contributors/two
-/contributors/local-tester
-compose-files/docker-compose.local-tester.yml
 compose-files/docker-compose.one.yml
 compose-files/docker-compose.two.yml

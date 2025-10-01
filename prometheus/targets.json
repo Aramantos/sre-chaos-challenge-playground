@@ -1,6 +1,60 @@
 [
   {
     "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
+      "local-tester-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "local-tester"
+    }
+  },
+  {
+    "targets": [
       "one-app-exporter:9113"
     ],
     "labels": {
@@ -19,11 +73,47 @@
   },
   {
     "targets": [
-      "local-tester-app-exporter:9113"
+      "three-app-exporter:9113"
     ],
     "labels": {
       "job": "contributor-apps",
-      "instance": "local-tester"
+      "instance": "three"
+    }
+  },
+  {
+    "targets": [
+      "one-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "one"
+    }
+  },
+  {
+    "targets": [
+      "one-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "one"
+    }
+  },
+  {
+    "targets": [
+      "two-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "two"
+    }
+  },
+  {
+    "targets": [
+      "test-app-exporter:9113"
+    ],
+    "labels": {
+      "job": "contributor-apps",
+      "instance": "test"
     }
   }
 ]
