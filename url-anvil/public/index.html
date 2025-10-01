@@ -4,122 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Anvil</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #1a1a1a; /* Dark background */
-            color: #e0e0e0; /* Light text */
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Darker shadow */
-        }
-        h1, h2 {
-            text-align: center;
-            color: #e0e0e0; /* Light headings */
-        }
-        .url-anvil-info { /* New styles for URL Anvil info section */
-            background-color: #2c2c2c;
-            border: 1px solid #444444;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 2rem;
-        }
-        .url-anvil-info h3 {
-            margin-top: 0;
-            color: #007bff; /* Accent color for heading */
-        }
-        .url-anvil-info ul {
-            list-style-type: disc;
-            padding-left: 20px;
-        }
-        .url-anvil-info li {
-            margin-bottom: 0.5rem;
-        }
-        .url-anvil-info li b {
-            color: #e0e0e0; /* Light text for bold terms */
-        }
-        .form-container { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-        textarea {
-            height: 150px;
-            padding: 0.5rem;
-            background-color: #2c2c2c; /* Darker textarea background */
-            color: #e0e0e0; /* Light textarea text */
-            border: 1px solid #444444; /* Darker border */
-        }
-        .button-group { display: flex; gap: 1rem; }
-        button {
-            padding: 0.5rem 1rem;
-            background-color: #007bff; /* Accent color */
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        button.secondary {
-            background-color: #6c757d; /* Secondary button color */
-        }
-        pre {
-            background-color: #2c2c2c; /* Darker pre background */
-            color: #e0e0e0; /* Light pre text */
-            padding: 1rem;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            border: 1px solid #444444; /* Darker border */
-        }
-        /* New styles for output explanation */
-        .output-explanation {
-            background-color: #2c2c2c;
-            border: 1px solid #444444;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-top: 1rem;
-        }
-        .output-explanation h3 {
-            margin-top: 0;
-            color: #e0e0e0;
-        }
-        .output-explanation ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .output-explanation li {
-            margin-bottom: 0.5rem;
-        }
-        .output-explanation li b {
-            color: #007bff; /* Accent color for key terms */
-        }
-    </style>
+    <!-- Link to the external stylesheet -->
+    <link rel="stylesheet" href="url-anvil.css">
+    <!-- Import Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Menlo&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <h1>URL Anvil</h1>
-    <p>Enter one or more URLs (one per line) to run a simple performance test against them.</p>
-    
-    <div class="url-anvil-info">
-        <h3>Purpose of URL Anvil:</h3>
-        <p>The URL Anvil is a micro-benchmark service designed to test the performance of external URLs. It simulates a workload by fetching multiple URLs concurrently and performing a CPU-bound task (hashing their combined content). This service acts as a standardized target for the SRE Chaos Challenges, allowing contributors to measure and optimize their services against a consistent workload.</p>
-        
-        <h3>How to Use for Challenges:</h3>
+    <p class="subtitle">A micro-benchmark service to test the performance of external URLs by fetching them concurrently and hashing their content.</p>
+
+    <div class="card">
+        <h3>How to Use for Challenges</h3>
         <ul>
             <li><b>Crash Script Challenge:</b> Use the URL Anvil to find the breaking point of a service. By testing a large number of URLs or very slow URLs, you can observe how your service handles stress and identify its maximum RPS before failure.</li>
-            <li><b>Robust Service Challenge:</b> Integrate the URL Anvil into your service's testing pipeline. The `total_fetch_time_ms` and `average_fetch_time_ms` metrics can help you evaluate the efficiency and responsiveness of your service under load. Aim for consistent and low fetch times.</li>
+            <li><b>Robust Service Challenge:</b> Integrate the URL Anvil into your service's testing pipeline. The `total_fetch_time_ms` and `average_fetch_time_ms` metrics can help you evaluate the efficiency and responsiveness of your service under load.</li>
             <li><b>Basic Usage:</b> Enter URLs in the text area, click "Test URLs" to run a benchmark, or "Load Sample URLs" for a quick start.</li>
         </ul>
     </div>
 
-    <div class="form-container">
-        <textarea id="url-textarea" placeholder="https://example.com\nhttps://google.com"></textarea>
+    <div class="card form-container">
+        <textarea id="url-textarea" placeholder="https://example.com
+https://google.com"></textarea>
         <div class="button-group">
             <button id="submit-btn">Test URLs</button>
             <button id="load-sample-btn" class="secondary">Load Sample URLs</button>
         </div>
     </div>
 
-    <h2>Result:</h2>
-    <pre id="result-output">Awaiting test...</pre>
-    <div class="output-explanation">
+    <div class="card">
+        <h2>Result:</h2>
+        <pre id="result-output">Awaiting test...</pre>
+    </div>
+
+    <div class="card output-explanation">
         <h3>Output Explanation:</h3>
         <ul>
             <li><b>urls_tested:</b> The number of URLs successfully fetched and processed.</li>
@@ -131,6 +51,7 @@
     </div>
 
     <script>
+        // The JavaScript logic remains the same.
         const submitBtn = document.getElementById('submit-btn');
         const loadSampleBtn = document.getElementById('load-sample-btn');
         const urlTextarea = document.getElementById('url-textarea');

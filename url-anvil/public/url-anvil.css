@@ -1,0 +1,148 @@
+/*
+  Proposed CSS for a more modern URL Anvil design.
+  - Uses the 'Inter' font and a consistent dark theme palette.
+  - Organizes content into cards for a cleaner layout.
+  - Improves styling for forms, buttons, and info boxes.
+*/
+
+/* Color Palette (consistent with leaderboard) */
+:root {
+  --dark-background: #121212;
+  --dark-surface: #1e1e1e;
+  --dark-primary: #3a7bfd;
+  --dark-secondary: #6c757d;
+  --dark-text-primary: #e0e0e0;
+  --dark-text-secondary: #a0a0a0;
+  --dark-border: #333333;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--dark-background);
+  color: var(--dark-text-primary);
+  margin: 0;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--dark-text-secondary);
+  text-align: center;
+  max-width: 650px;
+  margin-bottom: 3rem;
+}
+
+.card {
+  background-color: var(--dark-surface);
+  border: 1px solid var(--dark-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: var(--dark-primary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.card ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  color: var(--dark-text-secondary);
+}
+
+.card li {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.card li b {
+  color: var(--dark-text-primary);
+  font-weight: 500;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+textarea {
+  height: 150px;
+  padding: 1rem;
+  background-color: var(--dark-background);
+  color: var(--dark-text-primary);
+  border: 1px solid var(--dark-border);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--dark-primary);
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(58, 123, 253, 0.3);
+}
+
+button.secondary {
+  background-color: var(--dark-secondary);
+}
+
+button.secondary:hover {
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+pre {
+  background-color: var(--dark-background);
+  color: var(--dark-text-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border: 1px solid var(--dark-border);
+  font-family: 'Menlo', 'Consolas', monospace;
+}
+
+.output-explanation ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.output-explanation li b {
+  color: var(--dark-primary);
+  font-weight: 600;
+}

@@ -175,24 +175,32 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 
 1.  **Fork the Repository**: Fork the project repository to your GitHub account.
 2.  **Clone Your Fork**: Clone your forked repository to your local machine.
-    ```bash
+
+```bash
 git clone https://github.com/your-username/sre-chaos-challenge.git
 cd sre-chaos-challenge
-    ```
+```
+
 3.  **Create a New Branch**: Create a new branch for your feature or bug fix. Use a descriptive name (e.g., `feature/add-dynamic-sd`, `bugfix/fix-scoring-logic`).
-    ```bash
+
+```bash
 git checkout -b feature/your-feature-name
-    ```
+```
+
 4.  **Make Your Changes**: Implement your feature or bug fix. Ensure your code adheres to the project's coding style and conventions.
 5.  **Test Your Changes**: Run existing tests and add new tests for your changes if applicable. Ensure all tests pass.
 6.  **Commit Your Changes**: Write clear, concise commit messages.
-    ```bash
+
+```bash
 git commit -m "feat: Add new feature" # or "fix: Fix bug"
-    ```
+```
+
 7.  **Push Your Branch**: Push your local branch to your forked repository on GitHub.
-    ```bash
+
+```bash
 git push origin feature/your-feature-name
-    ```
+```
+
 8.  **Open a Pull Request (PR)**: Go to the original repository on GitHub and open a new Pull Request from your branch. Provide a clear title and detailed description of your changes. Reference any related issues.
 
 ### Coding Standards and Conventions
@@ -210,4 +218,4 @@ For a deeper dive into the project's technical components, data flow, and high-l
 
 ## 6. Getting Help
 
-If you have any questions or need assistance, please open an issue on GitHub or reach out through [mention communication channels if available, e.g., Discord, Slack].
+If you have any questions or need assistance, please open an issue on GitHub or reach out through **srechaoschallenge@gmail.com**.
