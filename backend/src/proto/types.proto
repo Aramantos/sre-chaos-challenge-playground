@@ -1,0 +1,113 @@
+// Copyright 2016 The Prometheus Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+package prometheus;
+
+option go_package = "prometheus";
+
+message Sample {
+  double value = 1;
+  int64 timestamp = 2;
+}
+
+// TimeSeries represents a single time series.
+message TimeSeries {
+  // For a TimeSeries to be valid, it must have a non-empty list of labels.
+  repeated Label labels = 1;
+  repeated Sample samples = 2;
+}
+
+message Label {
+  string name = 1;
+  string value = 2;
+}
+
+message Labels {
+  repeated Label labels = 1;
+}
+
+// Matcher specifies a rule, which can match or set of labels or not.
+message LabelMatcher {
+  enum Type {
+    EQ = 0;
+    NEQ = 1;
+    RE = 2;
+    NRE = 3;
+  }
+  Type type = 1;
+  string name = 2;
+  string value = 3;
+}
+
+// ReadHints are sent alongside a remote read request.
+message ReadHints {
+  // A hint of the requested series in bytes.
+  int64 series_requested = 1;
+  // A hint of the requested data in bytes.
+  int64 data_requested = 2;
+  // A hint of the requested data in bytes.
+  string func = 3;
+  // Start time in milliseconds.
+  int64 start_ms = 4;
+  // End time in milliseconds.
+  int64 end_ms = 5;
+  // List of label names used in the query.
+  repeated string grouping = 6;
+  // Indicate whether the query is step-wise.
+  bool by = 7;
+  // Range of the query in milliseconds.
+  int64 range_ms = 8;
+}
+
+// Chunk represents a single chunk of a time series.
+message Chunk {
+  // Minimum and maximum timestamps of samples in the chunk.
+  int64 min_time_ms = 1;
+  int64 max_time_ms = 2;
+
+  // The actual chunk data.
+  enum Type {
+    UNKNOWN = 0;
+    XOR = 1;
+  }
+  Type type = 3;
+  bytes data = 4;
+}
+
+// ChunkedSeries represents a single time series, but with samples in a
+// compressed format.
+message ChunkedSeries {
+  // For a ChunkedSeries to be valid, it must have a non-empty list of labels.
+  repeated Label labels = 1;
+  // A collection of chunks for the time series. Chunks may not be overlapping.
+  repeated Chunk chunks = 2;
+}
+
+message MetricMetadata {
+  // Type of the metric, e.g. GAUGE, COUNTER, etc.
+  enum MetricType {
+    UNKNOWN = 0;
+    COUNTER = 1;
+    GAUGE = 2;
+    HISTOGRAM = 3;
+    GAUGEHISTOGRAM = 4;
+    SUMMARY = 5;
+    INFO = 6;
+    STATESET = 7;
+  }
+  MetricType type = 1;
+  string metric_family_name = 2;
+  string help = 4;
+  string unit = 5;
+}

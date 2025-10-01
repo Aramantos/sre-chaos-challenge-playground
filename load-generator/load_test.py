@@ -16,7 +16,7 @@ def send_request(url):
 def main():
     """Main function to parse arguments and run the load test."""
     parser = argparse.ArgumentParser(description="Simple load testing script.")
-    parser.add_argument("url", help="The URL to send requests to.")
+    parser.add_argument("url", nargs='?', default="http://url-anvil:8080", help="The URL to send requests to. Defaults to http://url-anvil:8080.")
     parser.add_argument("request_count", type=int, help="The number of requests to send.")
     args = parser.parse_args()
 

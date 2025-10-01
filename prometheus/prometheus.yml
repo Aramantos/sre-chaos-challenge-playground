@@ -1,0 +1,26 @@
+# global configs
+global:
+  scrape_interval: 15s
+
+# A list of scrape configurations.
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'url-anvil'
+    static_configs:
+      - targets: ['url-anvil:8080']
+
+  - job_name: 'contributor-apps'
+    file_sd_configs:
+      - files:
+        - 'targets.json'
+
+# The following remote_write block is for submitting scores to the leaderboard.
+# The onboarding script will provide you with an API key.
+# You must edit this section and uncomment it to participate.
+
+remote_write:
+  - url: "http://backend:3001/api/v1/metrics/write"
+    # No bearer_token needed for remote_write, as the backend endpoint doesn't use apiKeyAuth

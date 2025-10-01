@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules-kube-state-metrics
+  namespace: sre-chaos
+data:
+  kubernetes-workload-owner.yaml: |
+    groups:
+      - name: kubernetes-workload-owner
+        rules:
+          - record: namespace_workload_pod:kube_pod_owner:relabel
+            expr: |
+              max by (cluster, namespace, pod, owner_name, owner_kind) (
+                label_replace(
+                  label_replace(
+                    kube_pod_owner{job="kube-state-metrics", owner_kind=~"ReplicaSet|StatefulSet|Job|DaemonSet"},
+                    "workload", "$1", "owner_name", "(.*)"
+                  ),
+                  "workload_type", "$1", "owner_kind", "(.*)"
+                )
+              )

@@ -1,0 +1,100 @@
+/* Define dark theme variables */
+$dark-background: #1a1a1a;
+$dark-text-color: #e0e0e0;
+$dark-card-background: #2c2c2c;
+$dark-border-color: #444444;
+$dark-accent-color: #007bff; // Keeping a similar accent for contrast
+
+/* Basic styles for the leaderboard */
+.main {
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: $dark-background; /* Apply dark background */
+  color: $dark-text-color; /* Apply dark text color */
+  min-height: 100vh; /* Ensure it covers the full viewport height */
+}
+
+.title {
+  text-align: center;
+  color: $dark-text-color; /* Adjust title color for dark theme */
+  margin-bottom: 2rem;
+}
+
+.subtitle {
+  text-align: center;
+  color: $dark-text-color;
+  margin-bottom: 1.5rem;
+}
+
+.leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* Adjust shadow for dark theme */
+  background-color: $dark-card-background; /* Apply dark card background */
+  border-radius: 8px;
+  overflow: hidden;
+  table-layout: fixed; /* Added for consistent column sizing */
+}
+
+thead tr {
+  background-color: $dark-accent-color; /* Use accent color for header */
+  color: #ffffff;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid $dark-border-color; /* Adjust border color for dark theme */
+}
+
+/* Specific width adjustments for Rank and User columns */
+th:nth-child(1), td:nth-child(1) { /* Rank */
+  width: 10%;
+}
+
+th:nth-child(2), td:nth-child(2) { /* User */
+  width: 25%;
+}
+
+tbody tr {
+  border-bottom: 1px solid $dark-border-color; /* Adjust border color for dark theme */
+}
+
+tbody tr:nth-of-type(even) {
+  background-color: lighten($dark-card-background, 5%); /* Slightly lighter even rows */
+}
+
+tbody tr:last-of-type {
+  border-bottom: 2px solid $dark-accent-color; /* Use accent color for last row border */
+}
+
+tbody tr:hover {
+  background-color: lighten($dark-card-background, 10%); /* Lighter hover for dark theme */
+}
+
+/* Styles for challenge selector buttons */
+.challenge-selector {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.challenge-selector button {
+  background-color: $dark-card-background;
+  color: $dark-text-color;
+  border: 1px solid $dark-border-color;
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.challenge-selector button:hover {
+  background-color: lighten($dark-card-background, 10%);
+}
+
+.challenge-selector button.active {
+  background-color: $dark-accent-color;
+  color: #ffffff;
+  border-color: $dark-accent-color;
+}

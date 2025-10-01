@@ -1,63 +1,44 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Environments
 .env
 .venv
 env/
 venv/
-ENV/
-env.bak/
-venv.bak/
+
+# Node.js / Angular
+**/node_modules
+/frontend/leaderboard-app/dist
+/frontend/leaderboard-app/tmp
+npm-debug.log*
 
 # Docker
 .dockerignore
 docker-compose.override.yml
 
-# Documentation
-future_improvements/
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# IDE and OS specific files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Future Improvements directory (as a dumping ground)
+/future_improvements/
+/docs/private
+
+# Ignore private contributor folders
+contributors/*/private
+
+# Data testing scripts
+test_scripts/
+
+/contributors/one
+/contributors/two
+compose-files/docker-compose.one.yml
+compose-files/docker-compose.two.yml

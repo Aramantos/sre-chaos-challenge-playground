@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-anvil-deployment
+  namespace: sre-chaos
+  labels:
+    app: url-anvil
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-anvil
+  template:
+    metadata:
+      labels:
+        app: url-anvil
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - name: url-anvil
+        image: gcr.io/artful-winter-473414-q1/sre-chaos-challenge-url-anvil:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-anvil-service
+  namespace: sre-chaos
+spec:
+  selector:
+    app: url-anvil
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

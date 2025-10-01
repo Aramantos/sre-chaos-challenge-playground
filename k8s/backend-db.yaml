@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-db-pvc
+  namespace: sre-chaos
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-db
+  namespace: sre-chaos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-db
+  template:
+    metadata:
+      labels:
+        app: backend-db
+    spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
+        volumeMounts:
+        - name: backend-db-storage
+          mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres
+          image: postgres:15
+          securityContext:
+            runAsUser: 999 # UID of the 'postgres' user in the postgres:15 image
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: sre_challenge_db
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata # Explicitly set PGDATA
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: backend-db-storage
+              mountPath: /var/lib/postgresql/data
+            - name: pg-hba-conf
+              mountPath: /var/lib/postgresql/data/pg_hba.conf
+              subPath: pg_hba.conf
+          command: ["sh", "-c"]
+          args:
+            - "if [ ! -d \"$PGDATA\" ]; then mkdir -p \"$PGDATA\"; chmod 0700 \"$PGDATA\"; initdb; fi && exec postgres"
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "user", "-d", "sre_challenge_db"]
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 5
+      volumes:
+        - name: backend-db-storage
+          persistentVolumeClaim:
+            claimName: backend-db-pvc
+        - name: pg-hba-conf
+          configMap:
+            name: backend-db-pg-hba-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-db
+  namespace: sre-chaos
+spec:
+  type: ClusterIP
+  selector:
+    app: backend-db
+  ports:
+    - port: 5432
+      targetPort: 5432

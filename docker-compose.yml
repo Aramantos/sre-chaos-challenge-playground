@@ -1,33 +1,139 @@
 services:
-  web:
-    build: .
+  backend:
+    build:
+      context: ./backend
+    image: sre-chaos-challenge-backend:latest
+    command: node src/index.js
+    volumes:
+      - ./backend/src:/usr/src/app/src
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "8080:80"
-
-  nginx-exporter:
-    image: nginx/nginx-prometheus-exporter:0.10.0
-    command: -nginx.scrape-uri http://web/stub_status
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     depends_on:
-      - web
+      db:
+        condition: service_healthy
+    networks:
+      - default
+
+  frontend:
+    build:
+      context: ./frontend/leaderboard-app
+    image: sre-chaos-challenge-frontend:latest
+    ports:
+      - "8081:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - default
+
+  # The standard reference application for the challenges
+  url-anvil:
+    build:
+      context: ./url-anvil
+    image: sre-chaos-challenge-url-anvil:latest
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8080 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - default
 
   prometheus:
     image: prom/prometheus:v2.30.3
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/:/etc/prometheus/
     ports:
       - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
     depends_on:
-      - web
-      - nginx-exporter
+      - url-anvil
+      - backend
+    networks:
+      - default
 
   grafana:
     image: grafana/grafana:8.2.2
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
+    networks:
+      - default
 
   load-generator:
     build: ./load-generator
+    image: sre-chaos-challenge-load-generator:latest
+    volumes:
+      - ./test_scripts/:/app/test_scripts/
+    environment:
+      API_KEY: ${API_KEY}
+      INFLUENCER_USER: ${INFLUENCER_USER}
+      BACKEND_URL: http://backend:3001
     depends_on:
-      - web
+      url-anvil:
+        condition: service_healthy
+    networks:
+      - default
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_SETUP_SERVER_GROUP: "SRE Challenge Servers"
+      PGADMIN_SETUP_SERVER_NAME: "SRE Challenge DB"
+      PGADMIN_SETUP_SERVER_HOST: db
+      PGADMIN_SETUP_SERVER_PORT: 5432
+      PGADMIN_SETUP_SERVER_USERNAME: ${POSTGRES_USER}
+      PGADMIN_SETUP_SERVER_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - default
+
+volumes:
+  db_data:
+  grafana_data:
+  pgadmin_data:
+
+networks:
+  default:
