@@ -5,7 +5,8 @@ import psycopg2
 import sys
 import json
 import requests
-from dotenv import load_dotenv
+import shutil
+from dotenv import load_dotenv, dotenv_values, set_key
 
 load_dotenv() # Load environment variables from .env
 
@@ -31,15 +32,29 @@ def get_db_connection():
         sys.exit(1)
 
 def create_contributor_app():
+    # --- Ensure .env file exists before loading environment variables ---
+    dotenv_path = os.path.join(os.getcwd(), '.env')
+    dotenv_example_path = os.path.join(os.getcwd(), '.env.example')
+
+    if not os.path.exists(dotenv_path):
+        if os.path.exists(dotenv_example_path):
+            shutil.copyfile(dotenv_example_path, dotenv_path)
+            print(f"Created .env file from .env.example at {dotenv_path}.")
+        else:
+            with open(dotenv_path, 'w') as f:
+                f.write("# Generated .env file\n")
+            print(f"Created empty .env file at {dotenv_path}.")
+
+    # Now load environment variables from the (now existing) .env file
+    load_dotenv(override=True) # Ensure it reloads if already loaded
+
     github_username = input("Enter the new contributor's GitHub username: ")
 
-    if not github_username:
-        print("GitHub username cannot be empty. Exiting.")
-        return
-
-    # --- Create user directory first ---
+    # Define paths early for cleanup
     source_dir = os.path.join("contributors", "contributor-app")
     destination_dir = os.path.join("contributors", github_username)
+    private_dir = os.path.join(destination_dir, 'private')
+    compose_file_path = os.path.join('compose-files', f'docker-compose.{github_username}.yml')
 
     if not os.path.exists(source_dir):
         print(f"Error: Source directory '{source_dir}' not found. Make sure 'contributor-app' exists inside 'contributors'.")
@@ -110,7 +125,22 @@ def create_contributor_app():
         try:
             response = requests.post(register_influencer_url, headers=headers, json=payload)
             response.raise_for_status() # Raise an exception for HTTP errors
-            print(f"Successfully registered '{github_username}' as active influencer for '{default_challenge}'.")
+            dotenv_path = os.path.join(os.getcwd(), '.env')
+            dotenv_example_path = os.path.join(os.getcwd(), '.env.example')
+
+            if not os.path.exists(dotenv_path):
+                if os.path.exists(dotenv_example_path):
+                    shutil.copyfile(dotenv_example_path, dotenv_path)
+                    print(f"Created .env file from .env.example at {dotenv_path}.")
+                else:
+                    # If .env.example also doesn't exist, create a minimal .env
+                    with open(dotenv_path, 'w') as f:
+                        f.write("# Generated .env file\n")
+                    print(f"Created empty .env file at {dotenv_path}.")
+
+            set_key(dotenv_path, "API_KEY", api_key)
+            set_key(dotenv_path, "INFLUENCER_USER", github_username)
+            print(f"Updated .env file with API_KEY and INFLUENCER_USER for '{github_username}'.")
         except requests.exceptions.RequestException as e:
             print(f"Error calling backend API to register influencer: {e}")
             print(f"CRITICAL: Contributor '{github_username}' created, but failed to register as active influencer.")

@@ -1,13 +1,6 @@
-### Hacktoberfest Sprint (October 2025)
-**Objective:** Prepare a polished and secure version of the *local Docker Compose experience* for a public launch for Hacktoberfest.
-**Key Tasks:**
-1.  **Security Refactor:** Remove all hardcoded secrets (e.g., database passwords) from the codebase and replace them with a secure configuration using environment variables (`.env` files).
-2.  **UI/Styling Overhaul:** Improve the visual design and user experience of the `leaderboard` and `url-anvil` frontend applications.
-3.  **Documentation Polish:** Update the `README.md` and contributor guides to be clear, concise, and welcoming for Hacktoberfest participants.
-
----
-
 # Contributor Guide
+
+## CURRENT STATUS: The Playground is working so you can proceed with using the [Contributor Onboarding: Deploying Your Application](#contributor-onboarding-deploying-your-application) and the [Step 2: Build and Run the Application](#step-2-build-and-run-the-application) guides and this should have your playground up and running.
 
 **Table of Contents**
 
@@ -127,7 +120,9 @@ To participate in the SRE Chaos Challenge, you'll deploy your own web applicatio
     ```bash
     python create_contributor_app.py
     ```
-    The script will prompt you for a **GitHub Username**, which will be your unique identifier in the challenge. It will then create your personal application directory at `contributors/<your-username>/`.
+    The script will prompt you for a GitHub username. This will be your unique identifier in the
+    challenge. It will then create your personal application directory at contributors/<your-username>/ and
+    automatically update your local `.env` file with your API key and username for seamless integration.
 
 2.  **Implement Your Solution**:
     Your goal is to modify the files in this directory (`index.html`, `nginx.conf`, `Dockerfile`) to create a web service that can best handle the various challenges. **For details on each challenge, refer to the "Understanding the Challenges" section above.** This is where you get creative!
@@ -173,26 +168,36 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 *   **Fairness:** `url-anvil` provides a consistent, known target for all participants.
 ### Development Workflow
 
+For a detailed guide on Git, forking, and project navigation, please refer to the [Git Tutorial (docs/GIT_TUTORIAL.md)](./docs/GIT_TUTORIAL.md).
+
 1.  **Fork the Repository**: Fork the project repository to your GitHub account.
 2.  **Clone Your Fork**: Clone your forked repository to your local machine.
-    ```bash
+
+```bash
 git clone https://github.com/your-username/sre-chaos-challenge.git
 cd sre-chaos-challenge
-    ```
+```
+
 3.  **Create a New Branch**: Create a new branch for your feature or bug fix. Use a descriptive name (e.g., `feature/add-dynamic-sd`, `bugfix/fix-scoring-logic`).
-    ```bash
+
+```bash
 git checkout -b feature/your-feature-name
-    ```
+```
+
 4.  **Make Your Changes**: Implement your feature or bug fix. Ensure your code adheres to the project's coding style and conventions.
 5.  **Test Your Changes**: Run existing tests and add new tests for your changes if applicable. Ensure all tests pass.
 6.  **Commit Your Changes**: Write clear, concise commit messages.
-    ```bash
+
+```bash
 git commit -m "feat: Add new feature" # or "fix: Fix bug"
-    ```
+```
+
 7.  **Push Your Branch**: Push your local branch to your forked repository on GitHub.
-    ```bash
+
+```bash
 git push origin feature/your-feature-name
-    ```
+```
+
 8.  **Open a Pull Request (PR)**: Go to the original repository on GitHub and open a new Pull Request from your branch. Provide a clear title and detailed description of your changes. Reference any related issues.
 
 ### Coding Standards and Conventions
@@ -210,4 +215,4 @@ For a deeper dive into the project's technical components, data flow, and high-l
 
 ## 6. Getting Help
 
-If you have any questions or need assistance, please open an issue on GitHub or reach out through [mention communication channels if available, e.g., Discord, Slack].
+If you have any questions or need assistance, please open an issue on GitHub or reach out through **srechaoschallenge@gmail.com**.

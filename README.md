@@ -1,5 +1,9 @@
 # SRE Chaos Challenge: A Competitive SRE Platform (Work In Progress)
 
+## CURRENT STATUS: Playground is opertaional, please follow the **[Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md)** to set up and use the playground.
+
+## COMING SOON: The Leaderboard and the Cloud deployment still have some kinks to work out but hopefully will be up and running soon. Thank you for visiting and your potential paitence.
+
 **Table of Contents**
 
 *   [Project Vision](#project-vision)
@@ -32,6 +36,7 @@ We are actively preparing this project for Hacktoberfest 2025! Our current devel
 
 **Key Points for Local Development:**
 
+*   **Seamless Onboarding:** The `create_contributor_app.py` script now automates the setup of your contributor application and updates your `.env` file for a smooth start.
 *   **One App Per User:** For local development, please focus on running **one contributor application at a time**. This ensures a clear understanding of your application's performance and avoids conflicts with other example applications.
 *   **Clean Slate:** We recommend starting with a clean Docker environment to prevent unintended interactions between services. Instructions below will guide you on how to achieve this.
 *   **Real-time Monitoring:** The core goal is to provide a live, real-time monitoring environment where you can see the impact of your application changes immediately in Prometheus and Grafana.
@@ -142,6 +147,7 @@ For detailed descriptions of each challenge, refer to the [Contributor Guide (do
 
 For a detailed breakdown of the project's architecture, components, and strategic decisions, please see the documentation in the `docs` directory.
 
+*   **[Git Tutorial (docs/GIT_TUTORIAL.md)](./docs/GIT_TUTORIAL.md)**: A guide to Git basics, forking workflow, and project navigation.
 *   **[Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md)**: A comprehensive guide for new contributors.
 *   **[Tech Stack Overview (docs/TECH_STACK.md)](./docs/TECH_STACK.md)**: A detailed breakdown of each service and how they interconnect.
 *   **[Full Command Glossary (docs/COMMAND_GLOSSARY.md)](./docs/COMMAND_GLOSSARY.md)**: A reference for all Docker and project-specific commands.

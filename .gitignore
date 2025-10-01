@@ -38,7 +38,15 @@ contributors/*/private
 # Data testing scripts
 test_scripts/
 
+# Contributor Testing 
 /contributors/one
 /contributors/two
+/contributors/three
+/contributors/local-tester
+/contributors/cloud-tester
+k8s\contributors/cloud-tester
+compose-files/docker-compose.cloud-tester.yml
+compose-files/docker-compose.local-tester.yml
 compose-files/docker-compose.one.yml
 compose-files/docker-compose.two.yml
+compose-files/docker-compose.three.yml
