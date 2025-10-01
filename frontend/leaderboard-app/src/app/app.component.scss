@@ -1,100 +1,129 @@
-/* Define dark theme variables */
-$dark-background: #1a1a1a;
-$dark-text-color: #e0e0e0;
-$dark-card-background: #2c2c2c;
-$dark-border-color: #444444;
-$dark-accent-color: #007bff; // Keeping a similar accent for contrast
+/*
+  Proposed SCSS for a more modern leaderboard design.
+  - Uses the 'Inter' font.
+  - Adds a subtle background pattern.
+  - Refines the table, buttons, and header for a cleaner look.
+*/
 
-/* Basic styles for the leaderboard */
+// Color Palette
+$dark-background: #121212;
+$dark-surface: #1e1e1e;
+$dark-primary: #3a7bfd;
+$dark-text-primary: #e0e0e0;
+$dark-text-secondary: #a0a0a0;
+$dark-border: #333333;
+
 .main {
-  padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background-color: $dark-background; /* Apply dark background */
-  color: $dark-text-color; /* Apply dark text color */
-  min-height: 100vh; /* Ensure it covers the full viewport height */
+  font-family: 'Inter', sans-serif;
+  background-color: $dark-background;
+  color: $dark-text-primary;
+  min-height: 100vh;
+  padding: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
 .title {
-  text-align: center;
-  color: $dark-text-color; /* Adjust title color for dark theme */
-  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $dark-text-primary;
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  text-align: center;
-  color: $dark-text-color;
-  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: $dark-text-secondary;
+}
+
+.challenge-selector {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  background-color: $dark-surface;
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid $dark-border;
+}
+
+.challenge-selector button {
+  background-color: transparent;
+  color: $dark-text-secondary;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    color: $dark-text-primary;
+  }
+
+  &.active {
+    background-color: $dark-primary;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba($dark-primary, 0.3);
+  }
+}
+
+.leaderboard-container {
+  width: 100%;
+  max-width: 1200px;
+  background-color: $dark-surface;
+  border-radius: 12px;
+  border: 1px solid $dark-border;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
 .leaderboard {
   width: 100%;
   border-collapse: collapse;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* Adjust shadow for dark theme */
-  background-color: $dark-card-background; /* Apply dark card background */
-  border-radius: 8px;
-  overflow: hidden;
-  table-layout: fixed; /* Added for consistent column sizing */
+  table-layout: fixed;
 }
 
 thead tr {
-  background-color: $dark-accent-color; /* Use accent color for header */
-  color: #ffffff;
+  background-color: transparent;
+  color: $dark-text-primary;
   text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 th, td {
-  padding: 12px 15px;
-  border: 1px solid $dark-border-color; /* Adjust border color for dark theme */
+  padding: 16px 20px;
+  border-bottom: 1px solid $dark-border;
 }
 
-/* Specific width adjustments for Rank and User columns */
-th:nth-child(1), td:nth-child(1) { /* Rank */
-  width: 10%;
-}
-
-th:nth-child(2), td:nth-child(2) { /* User */
-  width: 25%;
+td {
+  color: $dark-text-secondary;
+  font-size: 0.95rem;
 }
 
 tbody tr {
-  border-bottom: 1px solid $dark-border-color; /* Adjust border color for dark theme */
+  transition: background-color 0.2s ease;
+  &:last-of-type {
+    td {
+      border-bottom: none;
+    }
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
 }
 
-tbody tr:nth-of-type(even) {
-  background-color: lighten($dark-card-background, 5%); /* Slightly lighter even rows */
-}
-
-tbody tr:last-of-type {
-  border-bottom: 2px solid $dark-accent-color; /* Use accent color for last row border */
-}
-
-tbody tr:hover {
-  background-color: lighten($dark-card-background, 10%); /* Lighter hover for dark theme */
-}
-
-/* Styles for challenge selector buttons */
-.challenge-selector {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.challenge-selector button {
-  background-color: $dark-card-background;
-  color: $dark-text-color;
-  border: 1px solid $dark-border-color;
-  padding: 8px 15px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.challenge-selector button:hover {
-  background-color: lighten($dark-card-background, 10%);
-}
-
-.challenge-selector button.active {
-  background-color: $dark-accent-color;
-  color: #ffffff;
-  border-color: $dark-accent-color;
-}
+// Specific column widths
+th:nth-child(1), td:nth-child(1) { width: 8%; }

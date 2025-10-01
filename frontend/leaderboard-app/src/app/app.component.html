@@ -1,6 +1,12 @@
+<!-- 
+  Proposed HTML structure for the leaderboard.
+  - Wraps elements in .header-container and .leaderboard-container for better styling control.
+-->
 <main class="main">
-  <h1 class="title">SRE Chaos Challenge Leaderboard</h1>
-  <h2 class="subtitle">{{ currentChallenge.name }}</h2>
+  <div class="header-container">
+    <h1 class="title">SRE Chaos Challenge</h1>
+    <h2 class="subtitle">Leaderboard // {{ currentChallenge.name }}</h2>
+  </div>
 
   <div class="challenge-selector">
     <button *ngFor="let challenge of challenges" 
@@ -10,27 +16,29 @@
     </button>
   </div>
 
-  <table class="leaderboard">
-    <thead>
-      <tr>
-        <th>Rank</th>
-        <th>User</th>
-        <th *ngFor="let col of currentChallenge.columns">{{ col.header }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let entry of leaderboard; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ entry.user }}</td>
-        <td *ngFor="let col of currentChallenge.columns">
-          {{ getDisplayValue(entry, col) }}
-        </td>
-      </tr>
-      <tr *ngIf="leaderboard.length === 0">
-        <td [attr.colspan]="2 + currentChallenge.columns.length">No entries for this challenge yet.</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="leaderboard-container">
+    <table class="leaderboard">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>User</th>
+          <th *ngFor="let col of currentChallenge.columns">{{ col.header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of leaderboard; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ entry.user }}</td>
+          <td *ngFor="let col of currentChallenge.columns">
+            {{ getDisplayValue(entry, col) }}
+          </td>
+        </tr>
+        <tr *ngIf="leaderboard.length === 0">
+          <td [attr.colspan]="2 + currentChallenge.columns.length">No entries for this challenge yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </main>
 
 <router-outlet />
