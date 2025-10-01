@@ -19,7 +19,7 @@ Let's start by pushing the server with a significantly higher number of sequenti
 **The Command:**
 
 Run the original load generator with 500 requests:
-`docker-compose run --rm load-generator python load_test.py http://web 500`
+`docker-compose run --rm load-generator python load_test.py http://<your-app-name> 500`
 
 **What to Watch For:**
 
@@ -39,9 +39,22 @@ This script uses Python's `threading` library to dispatch multiple requests at o
 **The Command:**
 
 This command will send 100 total requests, but it will run them in batches of 50 concurrent requests. This is a much more intense test.
-`docker-compose run --rm load-generator python stress_test.py http://web 100 -c 50`
+`docker-compose run --rm load-generator python stress_test.py http://<your-app-name> 100 -c 50`
 
 This type of load is much more likely to overwhelm the server and reveal how it behaves under sudden, intense pressure.
+
+### Scenario 3: Normal Load Test (Baseline for URL Anvil)
+
+Before you start stress testing your own application, it's often useful to establish a baseline for the `url-anvil` service itself. This helps you understand its normal behavior.
+
+**The Command:**
+
+Run the load generator with 10 requests against the `url-anvil` service:
+`docker-compose run --rm load-generator python load_test.py http://url-anvil:8080 10`
+
+**What to Watch For:**
+
+Observe the response times and status codes. This provides a healthy baseline for `url-anvil` when not under stress from your application.
 
 ## A Gentle Introduction to Chaos Engineering
 
