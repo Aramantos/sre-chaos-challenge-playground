@@ -9,7 +9,26 @@ const protobuf = require('protobufjs'); // Import protobufjs
 const app = express();
 const port = 3001;
 
-app.use(express.json());
+// Custom middleware to handle different body parsers based on route
+app.use((req, res, next) => {
+    if (req.path === '/api/v1/metrics/write') {
+        // For Prometheus remote_write, we need the raw body as a Buffer
+        let data = [];
+        req.on('data', chunk => {
+            data.push(chunk);
+        });
+        req.on('end', () => {
+            req.body = Buffer.concat(data);
+            next();
+        });
+        req.on('error', (err) => {
+            console.error('Error reading raw body:', err);
+            res.status(500).send('Error reading raw body');
+        });
+    } else {
+        express.json()(req, res, next);
+    }
+});
 
 // Load protobufs
 let WriteRequest;
@@ -266,14 +285,7 @@ const apiKeyAuth = async (req, res, next) => {
 };
 
 // Prometheus remote_write endpoint
-app.post('/api/v1/metrics/write', (req, res, next) => {
-    // The body-parser middleware does not support snappy compression.
-    // We remove the content-encoding header to prevent body-parser from
-    // trying (and failing) to decompress the body. We will handle
-    // decompression manually in the route handler.
-    delete req.headers['content-encoding'];
-    next();
-}, express.raw({ type: 'application/x-protobuf', limit: '10mb' }), async (req, res) => {
+app.post('/api/v1/metrics/write', async (req, res) => {
     try {
         // Decompress the snappy-compressed request body
         const decompressed = await snappy.uncompress(req.body, { asBuffer: true });

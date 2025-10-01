@@ -8,4 +8,4 @@ COPY stress_test.py .
 RUN pip install requests
 RUN pip install python-dotenv
 
-CMD ["python", "load_test.py"]
+CMD ["python", "load_test.py", "http://url-anvil", "10"]

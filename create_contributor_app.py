@@ -180,15 +180,8 @@ services:
         targets_data = []
         if os.path.exists(targets_file):
             with open(targets_file, 'r') as f:
-                try:
-                    targets_data = json.load(f)
-                except json.JSONDecodeError:
-                    print(f"Warning: Could not decode {targets_file}. Starting with an empty list.")
-                    targets_data = []
-
-        # Filter out any existing entries for this user to prevent duplicates
-        targets_data = [target for target in targets_data if target.get('labels', {}).get('instance') != github_username]
-
+                targets_data = json.load(f)
+        
         targets_data.append(new_target)
         
         with open(targets_file, 'w') as f:

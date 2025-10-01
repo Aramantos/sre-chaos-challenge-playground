@@ -86,8 +86,6 @@ services:
       API_KEY: ${API_KEY}
       INFLUENCER_USER: ${INFLUENCER_USER}
       BACKEND_URL: http://backend:3001
-      # TARGET_URL: http://url-anvil:8080 # Default. Override to target a contributor app, e.g., http://testuser-app
-      # REQUEST_COUNT: 10 # Default. Override to send more requests.
     depends_on:
       url-anvil:
         condition: service_healthy
