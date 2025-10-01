@@ -1,0 +1,54 @@
+services:
+  # The standard reference application for the challenges
+  url-anvil:
+    build:
+      context: ./url-anvil
+    image: sre-chaos-challenge-url-anvil:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    # The remote_write URL will be commented out by default.
+    # Contributors will uncomment this to participate in the leaderboard.
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - url-anvil
+    networks:
+      - default
+
+  grafana:
+    image: grafana/grafana:8.2.2
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - default
+
+  load-generator:
+    build: ./load-generator
+    image: sre-chaos-challenge-load-generator:latest
+    depends_on:
+      - url-anvil
+    networks:
+      - default
+
+volumes:
+  grafana_data:
+
+networks:
+  default:
