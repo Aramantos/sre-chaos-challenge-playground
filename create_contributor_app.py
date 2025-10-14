@@ -140,6 +140,7 @@ def create_contributor_app():
 
             set_key(dotenv_path, "API_KEY", api_key)
             set_key(dotenv_path, "INFLUENCER_USER", github_username)
+            set_key(dotenv_path, "LOCAL_TRACKER_USER_ID", github_username)
             print(f"Updated .env file with API_KEY and INFLUENCER_USER for '{github_username}'.")
         except requests.exceptions.RequestException as e:
             print(f"Error calling backend API to register influencer: {e}")

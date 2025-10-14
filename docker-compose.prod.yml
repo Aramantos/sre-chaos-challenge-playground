@@ -31,25 +31,6 @@ services:
     networks:
       - default
 
-  local-tracker-service:
-    build: ./local-tracker-service
-    image: sre-chaos-challenge-local-tracker-service:latest
-    environment:
-      ENABLE_LOCAL_TRACKER: "true"
-      POSTGRES_DB: ${LOCAL_POSTGRES_DB}
-      POSTGRES_USER: ${LOCAL_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${LOCAL_POSTGRES_PASSWORD}
-      POSTGRES_HOST: local-db
-      LOCAL_TRACKER_API_KEY: ${LOCAL_TRACKER_API_KEY}
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q -O - http://localhost:3002/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - default
-
   frontend:
     build:
       context: ./frontend/leaderboard-app
@@ -58,18 +39,6 @@ services:
       - "8081:80"
     depends_on:
       backend:
-        condition: service_healthy
-    networks:
-      - default
-
-  local-tracker-app:
-    build:
-      context: ./frontend/local-tracker-app
-    image: sre-chaos-challenge-local-tracker-app:latest
-    ports:
-      - "8082:80"
-    depends_on:
-      local-tracker-service:
         condition: service_healthy
     networks:
       - default
@@ -120,12 +89,12 @@ services:
     image: sre-chaos-challenge-load-generator:latest
     volumes:
       - ./test_scripts/:/app/test_scripts/
-    env_file:
-      - .env
+    environment:
+      API_KEY: ${API_KEY}
+      INFLUENCER_USER: ${INFLUENCER_USER}
+      BACKEND_URL: http://backend:3001
     depends_on:
       url-anvil:
-        condition: service_healthy
-      local-tracker-service:
         condition: service_healthy
     networks:
       - default
@@ -168,27 +137,8 @@ services:
     networks:
       - default
 
-  local-db:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_DB: ${LOCAL_POSTGRES_DB}
-      POSTGRES_USER: ${LOCAL_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${LOCAL_POSTGRES_PASSWORD}
-    volumes:
-      - local_db_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${LOCAL_POSTGRES_USER} -d ${LOCAL_POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - default
-
 volumes:
   db_data:
-  local_db_data:
   grafana_data:
   pgadmin_data:
 

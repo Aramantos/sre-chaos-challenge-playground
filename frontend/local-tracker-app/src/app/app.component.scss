@@ -1,0 +1,109 @@
+/*
+  Proposed SCSS for a more modern tracker design.
+  - Uses the 'Inter' font.
+  - Adds a subtle background pattern.
+  - Refines the table, buttons, and header for a cleaner look.
+*/
+
+// Color Palette
+$dark-background: #121212;
+$dark-surface: #1e1e1e;
+$dark-primary: #3a7bfd;
+$dark-text-primary: #e0e0e0;
+$dark-text-secondary: #a0a0a0;
+$dark-border: #333333;
+
+.main {
+  font-family: 'Inter', sans-serif;
+  background-color: $dark-background;
+  color: $dark-text-primary;
+  min-height: 100vh;
+  padding: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $dark-text-primary;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: $dark-text-secondary;
+}
+
+.tracking-container {
+  width: 100%;
+  max-width: 1200px;
+  background-color: $dark-surface;
+  border-radius: 12px;
+  border: 1px solid $dark-border;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid $dark-border;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: $dark-text-secondary;
+  transition: color 0.2s ease;
+
+  &.active {
+    color: $dark-primary;
+    border-bottom: 2px solid $dark-primary;
+  }
+}
+
+.run-accordion {
+  list-style: none;
+  padding: 0;
+}
+
+.accordion-item {
+  border-bottom: 1px solid $dark-border;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.accordion-header {
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  &.active {
+    background-color: rgba($dark-primary, 0.1);
+  }
+}
+
+.accordion-content {
+  padding: 1rem;
+  background-color: $dark-background;
+}

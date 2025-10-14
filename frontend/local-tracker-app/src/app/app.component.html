@@ -1,0 +1,57 @@
+<!-- 
+  Proposed HTML structure for the tracking application.
+  - Wraps elements in .header-container and .tracking-container for better styling control.
+-->
+<main class="main">
+  <div class="header-container">
+    <h1 class="title">SRE Chaos Challenge</h1>
+    <h2 class="subtitle">User Tracking // {{ userId }}</h2>
+  </div>
+
+  <div class="tracking-container">
+    <div *ngIf="trackingData.length > 0; else noData">
+      <div class="tabs">
+        <div *ngFor="let target of trackingData" class="tab" [class.active]="selectedTarget === target.target_app" (click)="selectedTarget = target.target_app">
+          {{ target.target_app }}
+        </div>
+      </div>
+
+      <div *ngFor="let target of trackingData">
+        <div *ngIf="selectedTarget === target.target_app">
+          <div *ngFor="let session of target.sessions">
+            <h4>Session: {{ session.session_id }}</h4>
+            <ul class="run-accordion">
+              <li *ngFor="let entry of session.runs" class="accordion-item">
+                <div class="accordion-header" (click)="toggleRunDetails(entry.id)" [class.active]="expandedRunId === entry.id">
+                  {{ entry.timestamp | date:'medium' }} - {{ entry.challenge_type }} - {{ entry.metric_name }}
+                  <span class="toggle-icon">{{ expandedRunId === entry.id ? '-' : '+' }}</span>
+                </div>
+                <div class="accordion-content" *ngIf="expandedRunId === entry.id && entry.run_details">
+                  <h3>Run Details:</h3>
+                  <p><strong>Target URL:</strong> {{ entry.run_details.target_url }}</p>
+                  <p><strong>Request Count:</strong> {{ entry.run_details.request_count }}</p>
+                  <p><strong>Method:</strong> {{ entry.run_details.method }}</p>
+                  <p><strong>Total Requests:</strong> {{ entry.run_details.total_requests }}</p>
+                  <p><strong>Successful Requests:</strong> {{ entry.run_details.successful_requests }}</p>
+                  <p><strong>Failed Requests:</strong> {{ entry.run_details.failed_requests }}</p>
+                  <p><strong>Average Latency:</strong> {{ entry.run_details.avg_latency_ms | number:'1.2-2' }} ms</p>
+                  <p><strong>Error Rate:</strong> {{ entry.run_details.error_rate | number:'1.2-2' }} %</p>
+                  <p><strong>RPS:</strong> {{ entry.run_details.rps | number:'1.2-2' }}</p>
+                  <p><strong>Duration:</strong> {{ entry.run_details.duration_s | number:'1.2-2' }} s</p>
+                  <p><strong>Test Type:</strong> {{ entry.run_details.test_type }}</p>
+                  <p><strong>Schema Version:</strong> {{ entry.schema_version }}</p>
+                  <!-- Display other runDetails fields as needed -->
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noData>
+      <p>No tracking data found for user: {{ userId }}.</p>
+    </ng-template>
+  </div>
+</main>
+
+<router-outlet />

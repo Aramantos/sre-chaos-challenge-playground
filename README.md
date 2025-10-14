@@ -133,6 +133,14 @@ Open your browser and navigate to the leaderboard to see your ranking!
 
 Use the buttons at the top of the page to switch between the different challenge leaderboards.
 
+### Step 7: View Local Tracking
+
+Open your browser and navigate to the local tracker to see the results of your load tests!
+
+*   **Local Tracker**: `http://localhost:8082`
+
+Use the tabs at the top of the page to switch between the different targets.
+
 ## Understanding the Challenges
 
 The SRE Chaos Challenge features three distinct challenges, each designed to test different aspects of your application's performance and resilience. For all challenges, your deployed application will interact with the platform's **`url-anvil` service** as a consistent target. **Scores for the main leaderboard are derived from `url-anvil`'s metrics and attributed to the contributor currently registered as the "active influencer" for that challenge.** Your application's role is to *influence* the `url-anvil`'s performance according to the challenge's objective.
@@ -151,6 +159,8 @@ For a detailed breakdown of the project's architecture, components, and strategi
 *   **[Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md)**: A comprehensive guide for new contributors.
 *   **[Tech Stack Overview (docs/TECH_STACK.md)](./docs/TECH_STACK.md)**: A detailed breakdown of each service and how they interconnect.
 *   **[Full Command Glossary (docs/COMMAND_GLOSSARY.md)](./docs/COMMAND_GLOSSARY.md)**: A reference for all Docker and project-specific commands.
+*   **[Script Reference (docs/SCRIPT_REFERENCE.md)](./docs/SCRIPT_REFERENCE.md)**: A reference for all the scripts in the `scripts` directory.
+*   **[Load Testing Guide (docs/LOAD_TESTING_GUIDE.md)](./docs/LOAD_TESTING_GUIDE.md)**: A guide on how to run load tests against your applications.
 
 ## Legal & Policies
 
@@ -161,3 +171,70 @@ For a detailed breakdown of the project's architecture, components, and strategi
 ## License
 
 *   **[MIT License](./LICENSE)**
+
+---
+
+## Back Burner / Future Improvements
+
+* **Automate environment variable management:** Create a pre-run script that ensures all required environment variables are present in the `.env` file, adding defaults if missing. This script could be integrated into the `create_contributor_app.py` script to provide a seamless, automated experience for the user.
+* **Centralized .env Injection:** Instead of having `.env` on disk, create a “source-of-truth” config service or Python helper that dynamically injects env vars into each container using `docker-compose run -e`.
+* **Fully Automated Environment Verification:** When the user runs a test, the system checks if all required environment variables are available. If not, it prompts or generates them automatically before launching the container.
+* **Container Cleanup:** Provide a script that users can run to clean up unused containers. This would give them control over what gets deleted.
+* **Load-Generator Flexibility:** Expand to dynamically target contributor apps or `url-anvil`.  
+* **Onboarding & Challenge Switch Scripts:** Integrate `.env` handling for smoother context switching.  
+* **UI Enhancements:** Add filtering tabs for URL Anvil vs User Apps in local-tracker-app.  
+
+---
+
+> 🧭 SRE Chaos Challenge: System Flow Overview
+                    ┌─────────────────────────────┐
+                    │      Official Backend       │
+                    │ (Competition API + Leaderboard)
+                    └──────────────┬──────────────┘
+                                   │
+                                   │  (optional metric push)
+                                   │
+                ┌──────────────────┴──────────────────┐
+                │                                     │
+       ┌────────▼────────┐                 ┌──────────▼─────────┐
+       │ create_contributor_app.py         │ switch_challenge.py │
+       │  (sets up user + .env)            │  (toggles challenge)│
+       └─────────────────┬─────────────────┴─────────────────────┘
+                         │
+           ┌─────────────▼────────────────┐
+           │     Developer Environment    │
+           │  (.env, docker-compose, etc.)│
+           └─────────────┬────────────────┘
+                         │
+            ┌────────────┼────────────────────────┐
+            │             │                        │
+            ▼             ▼                        ▼
+   ┌────────────────┐  ┌────────────────┐  ┌───────────────────┐
+   │ url-anvil app  │  │ user test app  │  │ load-generator     │
+   │ (baseline app) │  │ (custom app)   │  │ (sends traffic)   │
+   └────────────────┘  └────────────────┘  └─────────┬─────────┘
+                                                      │
+                           ┌──────────────────────────┘
+                           ▼
+                 ┌──────────────────────┐
+                 │    Prometheus        │
+                 │ (scrapes metrics)    │
+                 └──────────┬───────────┘
+                            │
+                            ▼
+               ┌──────────────────────────────┐
+               │     local-tracker-service     │
+               │ (receives, parses, stores)   │
+               └──────────┬───────────────────┘
+                          │
+                          ▼
+                ┌────────────────────────────┐
+                │    local-tracker-app (UI)   │
+                │  (accordion metrics viewer) │
+                └──────────┬─────────────────┘
+                           │
+                           ▼
+                 ┌────────────────────────┐
+                 │  Local SQLite / JSON DB │
+                 │  (personal leaderboard) │
+                 └────────────────────────┘
