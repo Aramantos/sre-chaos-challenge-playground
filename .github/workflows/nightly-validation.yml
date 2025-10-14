@@ -1,0 +1,16 @@
+name: Nightly Validation
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Run dev-setup script
+        run: bash scripts/dev-setup.sh

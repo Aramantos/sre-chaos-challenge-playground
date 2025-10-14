@@ -4,8 +4,9 @@ WORKDIR /app
 
 COPY load_test.py .
 COPY stress_test.py .
+COPY local_tracker_client.py .
 
 RUN pip install requests
 RUN pip install python-dotenv
 
-CMD ["python", "load_test.py", "http://url-anvil", "10"]
+CMD ["tail", "-f", "/dev/null"]

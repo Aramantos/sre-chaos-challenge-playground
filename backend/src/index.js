@@ -1,3 +1,8 @@
+// Force immediate log flushing
+const util = require('util');
+console.log = (d, ...args) => {
+  process.stdout.write(util.format(d, ...args) + '\n');
+};
 
 require('dotenv').config();
 const express = require('express');
@@ -9,23 +14,17 @@ const protobuf = require('protobufjs'); // Import protobufjs
 const app = express();
 const port = 3001;
 
-// Custom middleware to handle different body parsers based on route
+// Middleware for Prometheus remote_write
+// This needs to be before express.json()
 app.use((req, res, next) => {
     if (req.path === '/api/v1/metrics/write') {
-        // For Prometheus remote_write, we need the raw body as a Buffer
-        let data = [];
-        req.on('data', chunk => {
-            data.push(chunk);
-        });
-        req.on('end', () => {
-            req.body = Buffer.concat(data);
-            next();
-        });
-        req.on('error', (err) => {
-            console.error('Error reading raw body:', err);
-            res.status(500).send('Error reading raw body');
-        });
+        // The 'Content-Encoding' header is removed to prevent express from automatically decompressing the body.
+        // This is necessary because the body is a snappy-compressed protobuf message, and we need to decompress it manually.
+        delete req.headers['content-encoding'];
+        // The express.raw middleware is used to read the raw body of the request.
+        express.raw({ type: '*/*' })(req, res, next);
     } else {
+        // The express.json middleware is used for all other routes.
         express.json()(req, res, next);
     }
 });
@@ -82,9 +81,11 @@ const getUserIdAndChallengeType = async (labels) => {
 const lastNginxRequests = {};
 const lastNginxUpStatus = {}; // To track uptime status for crash challenge
 const upkeepStatus = {}; // To track longest upkeep duration
+const robustServiceStatus = {};
 
 // Function to calculate and store scores
 const calculateAndStoreScore = async (userId, challengeType, metricName, value, timestamp, labels) => {
+    console.log('calculateAndStoreScore called with:', { userId, challengeType, metricName, value, timestamp, labels });
     console.log(`Attempting to calculate score for User: ${userId}, Challenge: ${challengeType}, Metric: ${metricName}, Value: ${value}`);
 
     let currentScore = 0;
@@ -101,22 +102,67 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
     }
 
     let pointsToAdd = 0;
-    const details = { metric: metricName, value: value, labels: labels };
+    const detailsObj = { metric: metricName, value: value, labels: labels };
     const startTime = timestamp; // For simplicity, using current metric timestamp
     const endTime = timestamp; // For simplicity, using current metric timestamp
 
     switch (challengeType) {
         case 'robust-service':
-            // Score for Robust Service: requests handled by url-anvil
+            if (!robustServiceStatus[userId]) {
+                robustServiceStatus[userId] = {
+                    total_requests: 0,
+                    total_latency: 0,
+                    avg_latency: 0,
+                    up_status: 0,
+                    last_up_time: null,
+                    total_uptime: 0,
+                    total_downtime: 0,
+                    uptime_percentage: 0,
+                };
+            }
+
             if (metricName === 'http_request_duration_ms_count') {
-                const previousRequests = lastNginxRequests[userId] || 0;
+                const previousRequests = robustServiceStatus[userId].total_requests || 0;
                 const requestIncrease = value - previousRequests;
                 if (requestIncrease > 0) {
                     pointsToAdd += requestIncrease * 0.1; // 0.1 points per request
                 }
-                lastNginxRequests[userId] = value; // Update last known value
+                robustServiceStatus[userId].total_requests = value; // Update last known value
             }
-            // Add more robust-service specific scoring logic here (e.g., penalize errors from url-anvil)
+
+            if (metricName === 'http_request_duration_ms_sum') {
+                robustServiceStatus[userId].total_latency = value;
+            }
+
+            if (robustServiceStatus[userId].total_requests > 0) {
+                robustServiceStatus[userId].avg_latency = robustServiceStatus[userId].total_latency / robustServiceStatus[userId].total_requests;
+            }
+
+            if (metricName === 'up') {
+                if (value === 1 && robustServiceStatus[userId].up_status === 0) {
+                    // Service came up
+                    robustServiceStatus[userId].last_up_time = timestamp;
+                } else if (value === 0 && robustServiceStatus[userId].up_status === 1) {
+                    // Service went down
+                    if (robustServiceStatus[userId].last_up_time) {
+                        const uptimeDuration = timestamp - robustServiceStatus[userId].last_up_time;
+                        robustServiceStatus[userId].total_uptime += uptimeDuration;
+                    }
+                }
+                robustServiceStatus[userId].up_status = value;
+            }
+
+            if (robustServiceStatus[userId].total_uptime > 0) {
+                const totalTime = robustServiceStatus[userId].total_uptime + robustServiceStatus[userId].total_downtime;
+                robustServiceStatus[userId].uptime_percentage = (robustServiceStatus[userId].total_uptime / totalTime) * 100;
+            }
+
+            detailsObj.uptime_percentage = robustServiceStatus[userId].uptime_percentage;
+            detailsObj.avg_latency = robustServiceStatus[userId].avg_latency;
+            detailsObj.last_downtime = upkeepStatus[userId] ? upkeepStatus[userId].last_downtime : null;
+            detailsObj.num_restarts = upkeepStatus[userId] ? upkeepStatus[userId].num_restarts : 0;
+            console.log('robustServiceStatus[userId]:', robustServiceStatus[userId]);
+            console.log('details:', detailsObj);
             break;
         case 'crash-challenge':
             // --- Original Crash Challenge Logic (commented out for Hacktoberfest) ---
@@ -153,12 +199,17 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
                 lastNginxRequests[userId] = value; // Update last known value
             }
             break;
-        case 'longest-upkeep':
+                case 'longest-upkeep':
+            if (!upkeepStatus[userId]) {
+                upkeepStatus[userId] = { current_up_start_time: null, max_up_duration: 0, num_restarts: 0, last_downtime: null };
+            }
+
+            if (metricName === 'up' && value === 0) {
+                upkeepStatus[userId].last_downtime = timestamp;
+            }
+
             // Score for Longest Upkeep Challenge: longest continuous uptime of url-anvil
             if (metricName === 'process_start_time_seconds') {
-                if (!upkeepStatus[userId]) {
-                    upkeepStatus[userId] = { current_up_start_time: null, max_up_duration: 0 };
-                }
 
                 // If the start time changes, it means url-anvil restarted
                 const currentStartTime = value; // value is process_start_time_seconds
@@ -167,6 +218,7 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
                 if (previousStartTime === null || currentStartTime > previousStartTime) {
                     // url-anvil started or restarted, reset uptime tracking
                     upkeepStatus[userId].current_up_start_time = currentStartTime;
+                    upkeepStatus[userId].num_restarts++;
                 }
 
                 // Calculate current uptime duration (from currentStartTime to now)
@@ -176,7 +228,10 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
                 if (currentUpDuration > upkeepStatus[userId].max_up_duration) {
                     upkeepStatus[userId].max_up_duration = currentUpDuration;
                 }
+                detailsObj.last_downtime = upkeepStatus[userId].last_downtime;
+                detailsObj.num_restarts = upkeepStatus[userId].num_restarts;
                 pointsToAdd = upkeepStatus[userId].max_up_duration; // Score is the longest upkeep duration
+                console.log('longest-upkeep details:', detailsObj);
             }
             break;
         default:
@@ -186,19 +241,38 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
 
     const newScore = currentScore + pointsToAdd;
 
+    // Optional: fetch previous details to merge (if you need cumulative merging)
+    const prev = await pool.query(
+      'SELECT details FROM competition_entries WHERE user_id=$1 AND challenge_type=$2',
+      [userId, challengeType]
+    );
+    let mergedDetails = detailsObj;
+    if (prev.rows[0] && prev.rows[0].details) {
+      try {
+        const prevDetails = typeof prev.rows[0].details === 'string'
+          ? JSON.parse(prev.rows[0].details)
+          : prev.rows[0].details;
+        // shallow merge: prev <- new (change as you need)
+        mergedDetails = { ...prevDetails, ...detailsObj };
+      } catch (e) { mergedDetails = detailsObj; }
+    }
+
+    // Insert/upsert with JSON string
+    const detailsJson = JSON.stringify(mergedDetails);
+
     try {
-        await pool.query(
-            `INSERT INTO competition_entries (user_id, challenge_type, score, start_time, end_time, details) \
-             VALUES ($1, $2, $3, $4, $5, $6) \
-             ON CONFLICT (user_id, challenge_type) DO UPDATE SET \
-             score = $3, \
-             start_time = EXCLUDED.start_time, \
-             end_time = EXCLUDED.end_time, \
-             details = EXCLUDED.details, \
-             timestamp = NOW()`,
-            [userId, challengeType, newScore, startTime, endTime, details]
-        );
-        console.log(`Score for ${userId} (${challengeType}) updated: ${newScore}`);
+        await pool.query(`
+            INSERT INTO competition_entries (user_id, challenge_type, score, start_time, end_time, details)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (user_id, challenge_type)
+            DO UPDATE SET
+                score = EXCLUDED.score,
+                start_time = EXCLUDED.start_time,
+                end_time = EXCLUDED.end_time,
+                details = EXCLUDED.details,
+                timestamp = NOW()
+        `, [userId, challengeType, newScore, startTime, endTime, detailsJson]);
+        console.log('Stored score + details for', userId, challengeType, detailsJson);
     } catch (error) {
         console.error(`Error storing score for ${userId} (${challengeType}):`, error);
     }
@@ -245,15 +319,13 @@ const initializeDatabase = async () => {
         `);
 
         // Insert example API keys if they don't exist
-        /*
         await pool.query(`
             INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('key1', 'contributor_a', 'default-challenge') ON CONFLICT (user_id) DO NOTHING;
             INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('key2', 'contributor_b', 'default-challenge') ON CONFLICT (user_id) DO NOTHING;
             INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('key3', 'contributor_c', 'default-challenge') ON CONFLICT (user_id) DO NOTHING;
-            INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('url-anvil-key', 'url-anvil-user', 'robust-service') ON CONFLICT (user_id) DO NOTHING;
+            INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('url-anvil-key', 'url-anvil-user', 'robust-service') ON CONFLICT (user_id) DO UPDATE SET key = EXCLUDED.key, challenge_type = EXCLUDED.challenge_type;
             INSERT INTO api_keys (key, user_id, challenge_type) VALUES ('newuser-key', 'newuser', 'robust-service') ON CONFLICT (user_id) DO NOTHING;
         `);
-        */
         console.log('Database schema initialized. Default API key insertion commented out.');
     } catch (err) {
         console.error('Error initializing database:', err);
@@ -292,6 +364,7 @@ app.post('/api/v1/metrics/write', async (req, res) => {
 
         // Decode the protobuf message
         const decoded = WriteRequest.decode(decompressed);
+        console.log('Received Prometheus WriteRequest:', JSON.stringify(decoded, null, 2));
 
         // Log the received time series for now
         console.log('Received Prometheus WriteRequest:', JSON.stringify(decoded, null, 2));
@@ -322,9 +395,9 @@ app.post('/api/v1/metrics/write', async (req, res) => {
 
                     // Only process relevant metrics for scoring
                     const relevantMetrics = {
-                        'robust-service': 'http_request_duration_ms_count',
+                        'robust-service': ['http_request_duration_ms_count', 'http_request_duration_ms_sum', 'up'],
                         'crash-challenge': 'http_request_duration_ms_count',
-                        'longest-upkeep': 'process_start_time_seconds'
+                        'longest-upkeep': ['process_start_time_seconds', 'up']
                     };
 
                     const userChallengePairs = await getUserIdAndChallengeType(labels);
@@ -333,7 +406,7 @@ app.post('/api/v1/metrics/write', async (req, res) => {
                     if (labels.job === 'url-anvil') {
                         for (const { userId, challengeType } of userChallengePairs) {
                             if (userId && challengeType) {
-                                if (relevantMetrics[challengeType] === metricName) {
+                                if (Array.isArray(relevantMetrics[challengeType]) ? relevantMetrics[challengeType].includes(metricName.toLowerCase()) : relevantMetrics[challengeType] === metricName.toLowerCase()) {
                                     await calculateAndStoreScore(userId, challengeType, metricName, value, timestamp, labels);
                                 }
                             }
@@ -377,12 +450,25 @@ app.post('/api/v1/leaderboard/:challenge', async (req, res) => {
             LIMIT 20;
         `, [challengeType]);
 
-        const leaderboard = dbResult.rows.map((entry, index) => ({
-            rank: index + 1,
-            user: entry.user_id,
-            score: entry.score,
-            ...entry.details // Optionally merge the details object
-        }));
+        const leaderboard = dbResult.rows.map((entry, index) => {
+            let details = entry.details;
+
+            // parse if needed
+            if (typeof details === 'string') {
+                try {
+                    details = JSON.parse(details);
+                } catch {
+                    details = {};
+                }
+            }
+
+            return {
+                rank: index + 1,
+                user: entry.user_id,
+                score: entry.score,
+                ...details // <— merge directly into the response object
+            };
+        });
 
         res.json(leaderboard);
     } catch (err) {
@@ -418,7 +504,7 @@ app.post('/api/v1/register-influencer', apiKeyAuth, async (req, res) => {
     }
 });
 
-app.get('/api/v1/leaderboard/:challenge', async (req, res) => {
+app.all('/api/v1/leaderboard/:challenge', async (req, res) => {
     const challengeType = req.params.challenge;
 
     // Basic validation for challenge type
@@ -441,12 +527,25 @@ app.get('/api/v1/leaderboard/:challenge', async (req, res) => {
             LIMIT 20;
         `, [challengeType]);
 
-        const leaderboard = dbResult.rows.map((entry, index) => ({
-            rank: index + 1,
-            user: entry.user_id,
-            score: entry.score,
-            ...entry.details // Optionally merge the details object
-        }));
+        const leaderboard = dbResult.rows.map((entry, index) => {
+            let details = entry.details;
+
+            // parse if needed
+            if (typeof details === 'string') {
+                try {
+                    details = JSON.parse(details);
+                } catch {
+                    details = {};
+                }
+            }
+
+            return {
+                rank: index + 1,
+                user: entry.user_id,
+                score: entry.score,
+                ...details // <— merge directly into the response object
+            };
+        });
 
         res.json(leaderboard);
     } catch (err) {

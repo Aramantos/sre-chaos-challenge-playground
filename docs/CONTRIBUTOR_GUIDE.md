@@ -170,6 +170,8 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 
 For a detailed guide on Git, forking, and project navigation, please refer to the [Git Tutorial (docs/GIT_TUTORIAL.md)](./docs/GIT_TUTORIAL.md).
 
+For a detailed guide on how to use the local tracker and run load tests, please see the [Local Tracker Guide](./LOCAL_TRACKER_GUIDE.md) and the [Load Testing Guide](./LOAD_TESTING_GUIDE.md).
+
 1.  **Fork the Repository**: Fork the project repository to your GitHub account.
 2.  **Clone Your Fork**: Clone your forked repository to your local machine.
 

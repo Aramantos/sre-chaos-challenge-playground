@@ -1,0 +1,13 @@
+{
+  "name": "sre-chaos-challenge",
+  "version": "1.0.0",
+  "description": "SRE Chaos Challenge project",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
