@@ -1,20 +1,16 @@
-# SRE Chaos Challenge: A Competitive SRE Platform (Work In Progress)
+# SRE Chaos Challenge: A Competitive SRE Platform
 
-## CURRENT STATUS: Playground is opertaional, please follow the **[Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md)** to set up and use the playground.
-
-## COMING SOON: The Leaderboard and the Cloud deployment still have some kinks to work out but hopefully will be up and running soon. Thank you for visiting and your potential paitence.
+> **Status:** 🟢 Local sandbox stable | ⚙️ Automation Phase (Epoch 2) in progress  
+> **Focus:** Improving test automation, onboarding UX, and CI/CD workflows  
+> **Next milestone:** Cloud-ready environment management (Epoch 3)
 
 **Table of Contents**
 
 *   [Project Vision](#project-vision)
+*   [System Flow Overview](#system-flow-overview)
+*   [Project Roadmap](#project-roadmap)
 *   [Prerequisites](#prerequisites)
 *   [How to Compete](#how-to-compete)
-    *   [Step 1: Configure Your Environment](#step-1-configure-your-environment)
-    *   [Step 2: Start the Platform](#step-2-start-the-platform)
-    *   [Step 3: Onboard Your Application](#step-3-onboard-your-application)
-    *   [Step 4: Run Your Application](#step-4-run-your-application)
-    *   [Step 5: Switch Your Active Challenge](#step-5-switch-your-active-challenge)
-    *   [Step 6: View the Leaderboard](#step-6-view-the-leaderboard)
 *   [Advanced Documentation](#advanced-documentation)
 *   [Understanding the Challenges](#understanding-the-challenges)
 *   [Legal & Policies](#legal--policies)
@@ -25,6 +21,36 @@
 ## Project Summary
 
 This project is a containerized platform designed to teach and evaluate Site Reliability Engineering (SRE) concepts through hands-on challenges. Contributors deploy their own web applications, which are monitored in real-time by the platform's internal Prometheus stack. The platform emphasizes **verifiable, live metrics** rather than self-reported results, ensuring scoring integrity.
+
+---
+
+## System Flow Overview
+
+```mermaid
+flowchart TD
+  A[Official Backend] --> B[create_contributor_app.py]
+  A --> C[switch_challenge.py]
+  B --> D[Developer Environment]
+  C --> D
+  D --> E[url-anvil app]
+  D --> F[user test app]
+  D --> G[load-generator]
+  G --> H[Prometheus]
+  H --> I[local-tracker-service]
+  I --> J[local-tracker-app]
+  J --> K[Local SQLite / JSON DB]
+```
+
+---
+
+## Project Roadmap
+
+This project is developed in major "Epochs". We have recently completed **Epoch 1 (Documentation & Knowledge Base Consolidation)**.
+
+We are now beginning **Epoch 2 (Platform Maturation & Automation)**.
+
+For a detailed breakdown of the current development phase and future plans, please see our official roadmap:
+*   **[PROJECT_ROADMAP.md](./PROJECT_ROADMAP.md)**
 
 ---
 
@@ -143,13 +169,7 @@ Use the tabs at the top of the page to switch between the different targets.
 
 ## Understanding the Challenges
 
-The SRE Chaos Challenge features three distinct challenges, each designed to test different aspects of your application's performance and resilience. For all challenges, your deployed application will interact with the platform's **`url-anvil` service** as a consistent target. **Scores for the main leaderboard are derived from `url-anvil`'s metrics and attributed to the contributor currently registered as the "active influencer" for that challenge.** Your application's role is to *influence* the `url-anvil`'s performance according to the challenge's objective.
-
-*   **Crash Script Challenge:** Build the most effective "crashing script" (your application) to exploit the breaking point of `url-anvil`.
-*   **Robust Service Challenge:** Build a highly efficient and reliable service that can handle a standardized, sustained load, often by interacting with `url-anvil`.
-*   **Longest Upkeep Challenge:** Build the most resilient and highly available service to withstand continuous, aggressive stress, likely interacting with `url-anvil` as part of its workload.
-
-For detailed descriptions of each challenge, refer to the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
+The goal is to build an application in your `contributors/<username>` directory that interacts with the platform's services to achieve the highest score in one of three challenges: Robust Service, Crash Script, or Longest Upkeep. For detailed rules and strategies, see the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
 
 ## Advanced Documentation
 
@@ -171,70 +191,3 @@ For a detailed breakdown of the project's architecture, components, and strategi
 ## License
 
 *   **[MIT License](./LICENSE)**
-
----
-
-## Back Burner / Future Improvements
-
-* **Automate environment variable management:** Create a pre-run script that ensures all required environment variables are present in the `.env` file, adding defaults if missing. This script could be integrated into the `create_contributor_app.py` script to provide a seamless, automated experience for the user.
-* **Centralized .env Injection:** Instead of having `.env` on disk, create a “source-of-truth” config service or Python helper that dynamically injects env vars into each container using `docker-compose run -e`.
-* **Fully Automated Environment Verification:** When the user runs a test, the system checks if all required environment variables are available. If not, it prompts or generates them automatically before launching the container.
-* **Container Cleanup:** Provide a script that users can run to clean up unused containers. This would give them control over what gets deleted.
-* **Load-Generator Flexibility:** Expand to dynamically target contributor apps or `url-anvil`.  
-* **Onboarding & Challenge Switch Scripts:** Integrate `.env` handling for smoother context switching.  
-* **UI Enhancements:** Add filtering tabs for URL Anvil vs User Apps in local-tracker-app.  
-
----
-
-> 🧭 SRE Chaos Challenge: System Flow Overview
-                    ┌─────────────────────────────┐
-                    │      Official Backend       │
-                    │ (Competition API + Leaderboard)
-                    └──────────────┬──────────────┘
-                                   │
-                                   │  (optional metric push)
-                                   │
-                ┌──────────────────┴──────────────────┐
-                │                                     │
-       ┌────────▼────────┐                 ┌──────────▼─────────┐
-       │ create_contributor_app.py         │ switch_challenge.py │
-       │  (sets up user + .env)            │  (toggles challenge)│
-       └─────────────────┬─────────────────┴─────────────────────┘
-                         │
-           ┌─────────────▼────────────────┐
-           │     Developer Environment    │
-           │  (.env, docker-compose, etc.)│
-           └─────────────┬────────────────┘
-                         │
-            ┌────────────┼────────────────────────┐
-            │             │                        │
-            ▼             ▼                        ▼
-   ┌────────────────┐  ┌────────────────┐  ┌───────────────────┐
-   │ url-anvil app  │  │ user test app  │  │ load-generator     │
-   │ (baseline app) │  │ (custom app)   │  │ (sends traffic)   │
-   └────────────────┘  └────────────────┘  └─────────┬─────────┘
-                                                      │
-                           ┌──────────────────────────┘
-                           ▼
-                 ┌──────────────────────┐
-                 │    Prometheus        │
-                 │ (scrapes metrics)    │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-               ┌──────────────────────────────┐
-               │     local-tracker-service     │
-               │ (receives, parses, stores)   │
-               └──────────┬───────────────────┘
-                          │
-                          ▼
-                ┌────────────────────────────┐
-                │    local-tracker-app (UI)   │
-                │  (accordion metrics viewer) │
-                └──────────┬─────────────────┘
-                           │
-                           ▼
-                 ┌────────────────────────┐
-                 │  Local SQLite / JSON DB │
-                 │  (personal leaderboard) │
-                 └────────────────────────┘
