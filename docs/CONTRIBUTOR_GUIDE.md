@@ -25,7 +25,7 @@ Welcome to the SRE Chaos Challenge project! This guide will help you get started
 
 ## 1. Project Overview
 
-This project is a complete, containerized web application stack designed to teach and evaluate Site Reliability Engineering (SRE) concepts. It includes:
+This project is a complete, containerized web application stack designed to teach and evaluate Site Reliability Engineering (SRE) concepts, with a strong emphasis on building resilient systems that can handle stress and gracefully degrade. It includes:
 
 *   **Contributor Web Applications**: Your deployed web services that will be monitored.
 *   **Prometheus**: A monitoring system that collects metrics from your applications.
@@ -138,13 +138,11 @@ To participate in the SRE Chaos Challenge, you'll deploy your own web applicatio
 
 The SRE Chaos Challenge features three distinct challenges, each designed to test different aspects of your application's performance and resilience. For all challenges, your deployed application will interact with the platform's **`url-anvil` service** as a consistent target. **Scores for the main leaderboard are derived from `url-anvil`'s metrics and attributed to the contributor currently registered as the "active influencer" for that challenge.**
 
-#### 1. Crash Script Challenge
+#### 1. Graceful Degradation Challenge
 
-*   **Goal:** To build the most effective "crashing script" (your application) that can identify and exploit the breaking point of a target service.
-*   **Mechanism:** Your deployed application will act as a specialized load generator, targeting the **`url-anvil` service**. The objective is to cause `url-anvil` to fail or become unresponsive as quickly and efficiently as possible.
-*   **Scoring:** Your score will be based on metrics from **`url-anvil`**, specifically those influenced by **your crashing script application**. This could include:
-    *   The speed at which you can induce a failure in `url-anvil`.
-    *   Metrics from `url-anvil` (like error rates or downtime) will be used to *verify* the crash.
+*   **Goal:** To build a resilient application that can gracefully handle stress and continue to serve requests even when the target service (`url-anvil`) is unstable.
+*   **Mechanism:** Your deployed application will be subjected to a continuous stressor. Your goal is to implement architectural patterns (like load balancing, retries, circuit breakers, etc.) to ensure that your application can continue to interact with `url-anvil` and that `url-anvil` can handle as many requests as possible.
+*   **Scoring:** Your score is based on the **total number of requests handled** by `url-anvil` while your solution is active. A solution that keeps `url-anvil` available and handling requests, even if it's slow or periodically unavailable, will score higher than a solution that allows `url-anvil` to become unresponsive and stay down.
 *   **Fairness:** `url-anvil` provides a consistent, known target for all participants.
 
 #### 2. Robust Service Challenge
@@ -160,7 +158,7 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 #### 3. Longest Upkeep Challenge
 
 *   **Goal:** To build the most resilient and highly available service that can withstand continuous, aggressive stress and maintain uptime for the longest duration.
-*   **Mechanism:** You will deploy your application, potentially implementing advanced architectural patterns like load balancing, auto-scaling, and redundancy. The platform will subject your application to a continuous, "guaranteed to crash eventually" stressor. Your application will likely interact with **`url-anvil`** as part of its workload.
+*   **Mechanism:** You will deploy your application, potentially implementing advanced architectural patterns like load balancing, auto-scaling, and redundancy. The platform will subject your application to a continuous stressor that will test its stability. Your application will likely interact with **`url-anvil`** as part of its workload.
 *   **Scoring:** Your score will be based on metrics from **`url-anvil`**, specifically those influenced by **your deployed application**. This will include:
     *   Total uptime duration of `url-anvil` under continuous stress.
     *   Time for `url-anvil` to recover from any induced failures.
@@ -171,6 +169,8 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 For a detailed guide on Git, forking, and project navigation, please refer to the [Git Tutorial (docs/GIT_TUTORIAL.md)](./docs/GIT_TUTORIAL.md).
 
 For a detailed guide on how to use the local tracker and run load tests, please see the [Local Tracker Guide](./LOCAL_TRACKER_GUIDE.md) and the [Load Testing Guide](./LOAD_TESTING_GUIDE.md).
+
+**Note on Test Suites:** The project utilizes a "mixed model" test suite. Public example scripts are located in `test_suite/public/` and are part of this repository. Internal, more advanced test harnesses are maintained in a separate, nested Git repository at `test_suite/private/`.
 
 1.  **Fork the Repository**: Fork the project repository to your GitHub account.
 2.  **Clone Your Fork**: Clone your forked repository to your local machine.
@@ -214,6 +214,7 @@ For a deeper dive into the project's technical components, data flow, and high-l
 
 *   **[Tech Stack Overview](TECH_STACK.md)**: A detailed breakdown of each service and how they interconnect.
 *   **[Architecture Decisions](ARCHITECTURE.md)**: A record of the strategic design choices and trade-offs made for the platform.
+*   **[Rules of Engagement (RULES_OF_ENGAGEMENT.md)](./RULES_OF_ENGAGEMENT.md)**: Guidelines for fair play and contributor conduct.
 
 ## 6. Getting Help
 

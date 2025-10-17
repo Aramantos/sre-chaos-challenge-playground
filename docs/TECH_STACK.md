@@ -34,7 +34,7 @@ The SRE Chaos Challenge is a comprehensive, containerized application designed t
         *   Receives Prometheus `remote_write` requests (snappy-compressed protobuf data) from the `prometheus` service.
         *   Decompresses and decodes these metrics using `snappy` and `protobufjs`.
         *   Authenticates requests and identifies the `challenge_type` using API keys stored in the `db` service.
-        *   Applies challenge-specific scoring logic (for "Robust", "Crash", and "Longest Upkeep" challenges) to the incoming metrics.
+        *   Applies challenge-specific scoring logic (for "Robust", "Graceful Degradation", and "Longest Upkeep" challenges) to the incoming metrics.
         *   Stores and updates competition entries (scores) into the `db` service.
         *   Serves the leaderboard data to the `frontend` service.
     *   **Communication**: 

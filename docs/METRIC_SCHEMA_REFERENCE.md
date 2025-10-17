@@ -1,8 +1,10 @@
-# Internal Metric Schema Reference
+# Local Tracker Metric Schema Reference (JSON)
 
-This document defines the internal JSON schema used by the `local-tracker-service` and `load-generator` for automatic metric reporting. **Users do not need to send this data manually.**
+This document defines the JSON schema used by the `local-tracker-service` and `load-generator` for automatic metric reporting within the local, unofficial sandbox environment. **Users do not need to send this data manually to the official leaderboard.**
 
-This documentation is for contributors developing or extending the automation scripts, not for general users running the environment.
+For information on the official backend API's metric protocol (Protobuf with Snappy compression), please refer to the project's internal architectural documentation.
+
+This documentation is primarily for contributors developing or extending the local automation scripts, not for general users running the environment.
 
 ## Schema Definition
 

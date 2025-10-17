@@ -36,7 +36,7 @@ Thumbs.db
 contributors/*/private
 
 # Data testing scripts
-test_scripts/
+test_suite/private
 
 # Contributor Testing 
 /contributors/one

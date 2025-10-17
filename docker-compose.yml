@@ -132,6 +132,8 @@ services:
 
   db:
     image: postgres:13-alpine
+    container_name: db-1
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -150,6 +152,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
+    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -170,6 +173,8 @@ services:
 
   local-db:
     image: postgres:13-alpine
+    container_name: local-db-1
+    restart: always
     environment:
       POSTGRES_DB: ${LOCAL_POSTGRES_DB}
       POSTGRES_USER: ${LOCAL_POSTGRES_USER}
@@ -188,9 +193,13 @@ services:
 
 volumes:
   db_data:
+    name: sre-chaos-challenge-db-data
   local_db_data:
+    name: sre-chaos-challenge-local-db-data
   grafana_data:
+    name: sre-chaos-challenge-grafana-data
   pgadmin_data:
+    name: sre-chaos-challenge-pgadmin-data
 
 networks:
   default:
