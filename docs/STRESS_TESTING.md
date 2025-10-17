@@ -8,9 +8,29 @@ This guide will introduce you to two key concepts for answering those questions:
 
 You've already run a **load test** using `load_test.py`. A load test checks how the system behaves under a *normal* or expected amount of traffic.
 
-A **stress test** is more extreme. Its goal is to push the system to its breaking point to see what happens. By intentionally overwhelming the server, we can find its limits, identify bottlenecks, and observe how it fails. Does it get slow? Does it crash? Does it start returning errors? These are the questions a stress test helps us answer.
+A **stress test** is more extreme. Its goal is to push the system to its breaking point to see what happens. By intentionally overwhelming the server, we can find its limits, identify bottlenecks, and observe how it fails. Does it get slow? Does it become unresponsive? Does it start returning errors? These are the questions a stress test helps us answer.
 
 ## How to Stress Test This Project
+
+### Using the Graceful Degradation Solver
+
+The `solve_graceful_degradation.py` script (located in `test_suite/public/`) is designed to continuously send requests to the `url-anvil` service, simulating a sustained load. This is an excellent way to stress test your application and observe its behavior under pressure.
+
+**The Command:**
+
+First, ensure you have installed the dependencies for the public test suite:
+`pip install -r test_suite/public/requirements.txt`
+
+Then, run the solver script:
+`python test_suite/public/solve_graceful_degradation.py`
+
+**What to Watch For:**
+
+While this script is running, keep your Grafana dashboard open. Observe how your application and the `url-anvil` service respond:
+*   **Latency:** Does the average response time increase significantly?
+*   **Throughput:** Can your application maintain a high rate of successful requests?
+*   **Errors:** Does your application start returning errors, or does it gracefully handle the load?
+*   **Resource Usage:** Monitor CPU and memory usage for signs of bottlenecks.
 
 ### Scenario 1: The Slow Burn (Finding the Limit)
 

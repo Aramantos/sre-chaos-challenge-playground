@@ -20,7 +20,7 @@
 
 ## Project Summary
 
-This project is a containerized platform designed to teach and evaluate Site Reliability Engineering (SRE) concepts through hands-on challenges. Contributors deploy their own web applications, which are monitored in real-time by the platform's internal Prometheus stack. The platform emphasizes **verifiable, live metrics** rather than self-reported results, ensuring scoring integrity.
+This project is a containerized platform designed to teach and evaluate Site Reliability Engineering (SRE) concepts through hands-on challenges, with a strong emphasis on building resilient systems that can handle stress and gracefully degrade. Contributors deploy their own web applications, which are monitored in real-time by the platform's internal Prometheus stack. The platform emphasizes **verifiable, live metrics** rather than self-reported results, ensuring scoring integrity.
 
 ---
 
@@ -77,6 +77,37 @@ We appreciate your patience and contributions as we refine this platform!
 *   [Docker Compose](https://docs.docker.com/compose/install/)
 *   [Python](https://www.python.org/downloads/)
 
+## Python Virtual Environment (venv)
+
+It is highly recommended to use a Python virtual environment (`venv`) for managing project dependencies. This isolates project-specific libraries from your global Python installation, preventing conflicts and ensuring consistent environments.
+
+### Setup Instructions:
+
+1.  **Create a virtual environment** (from the project root):
+    ```bash
+    python -m venv venv
+    ```
+2.  **Activate the virtual environment**:
+    *   **On Windows (Command Prompt/PowerShell):**
+        ```bash
+        .\venv\Scripts\activate
+        ```
+    *   **On macOS/Linux (Bash/Zsh):**
+        ```bash
+        source venv/bin/activate
+        ```
+
+    You should see `(venv)` prepended to your terminal prompt, indicating the virtual environment is active.
+
+3.  **Install dependencies**:
+    Once activated, you can install project-specific dependencies using `pip`.
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+Remember to activate your virtual environment whenever you start a new terminal session to work on the project.
+
 ## How to Compete
 
 Follow these steps to get your own application monitored by the platform and compete on the leaderboard.
@@ -111,18 +142,9 @@ docker-compose up --build -d
 
 ### Step 3: Onboard Your Application
 
-Now, run the onboarding script. This will create a dedicated application directory for you.
+Now, run the onboarding script. This will create a dedicated application directory for you. Ensure your Python virtual environment is active (see "Python Virtual Environment (venv)" under "Prerequisites").
 
 ```bash
-# It is recommended to use a Python virtual environment so all dependencies will be installed there rather than on your global machine.
-
-# Create your virtual environment
-python -m venv venv
-
-# Activate the environment
-.\venv\Scripts\activate
-
-# Run the onboarding script
 python create_contributor_app.py
 ```
 
@@ -169,7 +191,7 @@ Use the tabs at the top of the page to switch between the different targets.
 
 ## Understanding the Challenges
 
-The goal is to build an application in your `contributors/<username>` directory that interacts with the platform's services to achieve the highest score in one of three challenges: Robust Service, Graceful Degradation, or Longest Upkeep. For detailed rules and strategies, see the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
+The SRE Chaos Challenge features three distinct challenges, each designed to test different aspects of your application's performance and resilience, with a focus on building systems that can gracefully handle stress. For detailed rules, strategies, and the philosophy behind each challenge, see the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
 
 ## Advanced Documentation
 
@@ -181,6 +203,7 @@ For a detailed breakdown of the project's architecture, components, and strategi
 *   **[Full Command Glossary (docs/COMMAND_GLOSSARY.md)](./docs/COMMAND_GLOSSARY.md)**: A reference for all Docker and project-specific commands.
 *   **[Script Reference (docs/SCRIPT_REFERENCE.md)](./docs/SCRIPT_REFERENCE.md)**: A reference for all the scripts in the `scripts` directory.
 *   **[Load Testing Guide (docs/LOAD_TESTING_GUIDE.md)](./docs/LOAD_TESTING_GUIDE.md)**: A guide on how to run load tests against your applications.
+*   **[Rules of Engagement (docs/RULES_OF_ENGAGEMENT.md)](./docs/RULES_OF_ENGAGEMENT.md)**: Guidelines for fair play and contributor conduct.
 
 ## Legal & Policies
 

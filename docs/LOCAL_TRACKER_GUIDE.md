@@ -36,6 +36,12 @@ LOCAL_TRACKER_USER_ID=local_dev_user
 
 Metrics are automatically collected and sent by the `load-generator` and `local-tracker-client`. The `load-generator` will create a new session each time it is started. All subsequent load tests will be grouped under this session.
 
+To ensure all necessary Python dependencies are installed, first activate your Python virtual environment (see "Python Virtual Environment (venv)" in the [README.md](../README.md)), then run:
+
+```bash
+pip install -r requirements.txt
+```
+
 Developers extending these tools can refer to **[METRIC_SCHEMA_REFERENCE.md](METRIC_SCHEMA_REFERENCE.md)** for the data structure.
 
 ## 3. Viewing Your Local Results

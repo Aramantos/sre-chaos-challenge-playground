@@ -25,7 +25,7 @@ Welcome to the SRE Chaos Challenge project! This guide will help you get started
 
 ## 1. Project Overview
 
-This project is a complete, containerized web application stack designed to teach and evaluate Site Reliability Engineering (SRE) concepts. It includes:
+This project is a complete, containerized web application stack designed to teach and evaluate Site Reliability Engineering (SRE) concepts, with a strong emphasis on building resilient systems that can handle stress and gracefully degrade. It includes:
 
 *   **Contributor Web Applications**: Your deployed web services that will be monitored.
 *   **Prometheus**: A monitoring system that collects metrics from your applications.
@@ -170,6 +170,8 @@ For a detailed guide on Git, forking, and project navigation, please refer to th
 
 For a detailed guide on how to use the local tracker and run load tests, please see the [Local Tracker Guide](./LOCAL_TRACKER_GUIDE.md) and the [Load Testing Guide](./LOAD_TESTING_GUIDE.md).
 
+**Note on Test Suites:** The project utilizes a "mixed model" test suite. Public example scripts are located in `test_suite/public/` and are part of this repository. Internal, more advanced test harnesses are maintained in a separate, nested Git repository at `test_suite/private/`.
+
 1.  **Fork the Repository**: Fork the project repository to your GitHub account.
 2.  **Clone Your Fork**: Clone your forked repository to your local machine.
 
@@ -212,6 +214,7 @@ For a deeper dive into the project's technical components, data flow, and high-l
 
 *   **[Tech Stack Overview](TECH_STACK.md)**: A detailed breakdown of each service and how they interconnect.
 *   **[Architecture Decisions](ARCHITECTURE.md)**: A record of the strategic design choices and trade-offs made for the platform.
+*   **[Rules of Engagement (RULES_OF_ENGAGEMENT.md)](./RULES_OF_ENGAGEMENT.md)**: Guidelines for fair play and contributor conduct.
 
 ## 6. Getting Help
 
