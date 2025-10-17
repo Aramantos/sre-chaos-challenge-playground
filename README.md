@@ -149,7 +149,7 @@ You can choose which challenge you are competing in at any time without stopping
 python switch_challenge.py --user <your-username> --challenge longest-upkeep
 ```
 
-The available challenges are `robust-service`, `crash-challenge`, and `longest-upkeep`. The backend will immediately start applying the scoring rules for the new challenge to the metrics it receives from your application.
+The available challenges are `robust-service`, `graceful-degradation`, and `longest-upkeep`. The backend will immediately start applying the scoring rules for the new challenge to the metrics it receives from your application.
 
 ### Step 6: View the Leaderboard
 
@@ -169,7 +169,7 @@ Use the tabs at the top of the page to switch between the different targets.
 
 ## Understanding the Challenges
 
-The goal is to build an application in your `contributors/<username>` directory that interacts with the platform's services to achieve the highest score in one of three challenges: Robust Service, Crash Script, or Longest Upkeep. For detailed rules and strategies, see the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
+The goal is to build an application in your `contributors/<username>` directory that interacts with the platform's services to achieve the highest score in one of three challenges: Robust Service, Graceful Degradation, or Longest Upkeep. For detailed rules and strategies, see the [Contributor Guide (docs/CONTRIBUTOR_GUIDE.md)](./docs/CONTRIBUTOR_GUIDE.md).
 
 ## Advanced Documentation
 

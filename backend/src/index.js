@@ -79,7 +79,7 @@ const getUserIdAndChallengeType = async (labels) => {
 };
 
 const lastNginxRequests = {};
-const lastNginxUpStatus = {}; // To track uptime status for crash challenge
+const lastNginxUpStatus = {}; // To track uptime status for graceful-degradation
 const upkeepStatus = {}; // To track longest upkeep duration
 const robustServiceStatus = {};
 
@@ -164,32 +164,10 @@ const calculateAndStoreScore = async (userId, challengeType, metricName, value, 
             console.log('robustServiceStatus[userId]:', robustServiceStatus[userId]);
             console.log('details:', detailsObj);
             break;
-        case 'crash-challenge':
-            // --- Original Crash Challenge Logic (commented out for Hacktoberfest) ---
-            /*
-            if (metricName === 'process_cpu_seconds_total') {
-                const previousCpuTotal = lastNginxUpStatus[userId] ? lastNginxUpStatus[userId].status : 0; // Using status to store last known CPU total
-                const currentCpuTotal = value;
+        case 'graceful-degradation':
 
-                if (previousCpuTotal === 0 && currentCpuTotal > 0) {
-                    // url-anvil started or recovered
-                    console.log(`url-anvil started/recovered for ${userId} at ${timestamp.toISOString()}`);
-                    pointsToAdd += 5; // Small bonus for url-anvil starting up
-                    lastNginxUpStatus[userId] = { status: currentCpuTotal, timestamp: timestamp };
-                } else if (previousCpuTotal > 0 && currentCpuTotal <= previousCpuTotal) {
-                    // url-anvil crashed or stopped (CPU total not increasing or reset)
-                    console.log(`url-anvil crashed/stopped for ${userId} at ${timestamp.toISOString()}`);
-                    pointsToAdd -= 50; // Penalty for url-anvil crashing
-                    lastNginxUpStatus[userId] = { status: 0, timestamp: timestamp }; // Mark as down
-                } else if (currentCpuTotal > previousCpuTotal) {
-                    // url-anvil is still up and processing (CPU total increasing)
-                    pointsToAdd += 1; // Small continuous uptime bonus for url-anvil
-                    lastNginxUpStatus[userId] = { status: currentCpuTotal, timestamp: timestamp };
-                }
-            }
-            */
-            // --- Temporary Crash Challenge Logic for Hacktoberfest ---
-            // Score for Crash Challenge: based on requests handled by url-anvil
+            // --- Temporary Graceful Degradation Logic for Hacktoberfest ---
+            // Score for Graceful Degradation: based on requests handled by url-anvil
             if (metricName === 'http_request_duration_ms_count') {
                 const previousRequests = lastNginxRequests[userId] || 0;
                 const requestIncrease = value - previousRequests;
@@ -396,7 +374,7 @@ app.post('/api/v1/metrics/write', async (req, res) => {
                     // Only process relevant metrics for scoring
                     const relevantMetrics = {
                         'robust-service': ['http_request_duration_ms_count', 'http_request_duration_ms_sum', 'up'],
-                        'crash-challenge': 'http_request_duration_ms_count',
+                        'graceful-degradation': 'http_request_duration_ms_count',
                         'longest-upkeep': ['process_start_time_seconds', 'up']
                     };
 
@@ -431,7 +409,7 @@ app.post('/api/v1/leaderboard/:challenge', async (req, res) => {
     const challengeType = req.params.challenge;
 
     // Basic validation for challenge type
-    const validChallenges = ['crash-challenge', 'robust-service', 'longest-upkeep'];
+    const validChallenges = ['graceful-degradation', 'robust-service', 'longest-upkeep'];
     if (!validChallenges.includes(challengeType)) {
         return res.status(400).send('Invalid challenge type.');
     }
@@ -482,7 +460,7 @@ app.post('/api/v1/register-influencer', apiKeyAuth, async (req, res) => {
     const { challenge_type } = req.body;
     const user_id = req.user_id; // From apiKeyAuth middleware
 
-    const validChallenges = ['crash-challenge', 'robust-service', 'longest-upkeep'];
+    const validChallenges = ['graceful-degradation', 'robust-service', 'longest-upkeep'];
     if (!validChallenges.includes(challenge_type)) {
         return res.status(400).send('Invalid challenge type.');
     }
@@ -508,7 +486,7 @@ app.all('/api/v1/leaderboard/:challenge', async (req, res) => {
     const challengeType = req.params.challenge;
 
     // Basic validation for challenge type
-    const validChallenges = ['crash-challenge', 'robust-service', 'longest-upkeep'];
+    const validChallenges = ['graceful-degradation', 'robust-service', 'longest-upkeep'];
     if (!validChallenges.includes(challengeType)) {
         return res.status(400).send('Invalid challenge type.');
     }

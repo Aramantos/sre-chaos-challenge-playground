@@ -10,13 +10,13 @@ def switch_challenge():
     """Updates the challenge type for a given user by calling the backend API."""
     parser = argparse.ArgumentParser(description="Switch the active challenge for a contributor.")
     parser.add_argument("--user", required=True, help="The GitHub username of the contributor.")
-    parser.add_argument("--challenge", required=True, help="The new challenge to switch to (e.g., 'robust-service', 'crash-challenge', 'longest-upkeep').")
+    parser.add_argument("--challenge", required=True, help="The new challenge to switch to (e.g., 'robust-service', 'graceful-degradation', 'longest-upkeep').")
     args = parser.parse_args()
 
     github_username = args.user
     new_challenge_type = args.challenge
 
-    valid_challenges = ['robust-service', 'crash-challenge', 'longest-upkeep'];
+    valid_challenges = ['robust-service', 'graceful-degradation', 'longest-upkeep'];
     if new_challenge_type not in valid_challenges:
         print(f"Error: Invalid challenge type '{new_challenge_type}'.")
         print(f"Please choose from: {valid_challenges}")

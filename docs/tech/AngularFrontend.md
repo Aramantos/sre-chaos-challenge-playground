@@ -7,7 +7,7 @@ Angular is a popular open-source framework for building client-side web applicat
 The `frontend` service (running as an Nginx static file server) provides the user interface for the SRE Chaos Challenge. Its primary functions are:
 
 1.  **Leaderboard Display:** It fetches real-time scoring data from the Node.js Backend API and presents it in a dynamic, sortable, and visually appealing leaderboard format.
-2.  **Challenge Selection:** Users can switch between different challenge leaderboards (e.g., `robust-service`, `crash-challenge`) using interactive buttons, allowing them to view rankings specific to each challenge.
+2.  **Challenge Selection:** Users can switch between different challenge leaderboards (e.g., `robust-service`, `graceful-degradation`) using interactive buttons, allowing them to view rankings specific to each challenge.
 3.  **User Experience:** It provides a responsive and intuitive interface for contributors to track their progress and see how they rank against others.
 4.  **Dark Mode:** The frontend is styled with a permanent dark mode theme for improved aesthetics and reduced eye strain.
 

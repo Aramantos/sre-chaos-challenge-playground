@@ -5,9 +5,9 @@ import time
 
 URL_ANVIL_URL = "http://localhost:8080"
 
-def solve_crash_challenge():
-    """Sends requests to the url-anvil service to generate metrics for the crash-challenge."""
-    print("--- Starting crash-challenge solver ---")
+def solve_graceful_degradation():
+    """Sends requests to the url-anvil service to generate metrics for the graceful-degradation challenge."""
+    print("--- Starting graceful-degradation solver ---")
     while True:
         try:
             # Get sample URLs
@@ -28,4 +28,4 @@ def solve_crash_challenge():
         time.sleep(5)
 
 if __name__ == "__main__":
-    solve_crash_challenge()
+    solve_graceful_degradation()

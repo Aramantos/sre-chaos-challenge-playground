@@ -138,13 +138,11 @@ To participate in the SRE Chaos Challenge, you'll deploy your own web applicatio
 
 The SRE Chaos Challenge features three distinct challenges, each designed to test different aspects of your application's performance and resilience. For all challenges, your deployed application will interact with the platform's **`url-anvil` service** as a consistent target. **Scores for the main leaderboard are derived from `url-anvil`'s metrics and attributed to the contributor currently registered as the "active influencer" for that challenge.**
 
-#### 1. Crash Script Challenge
+#### 1. Graceful Degradation Challenge
 
-*   **Goal:** To build the most effective "crashing script" (your application) that can identify and exploit the breaking point of a target service.
-*   **Mechanism:** Your deployed application will act as a specialized load generator, targeting the **`url-anvil` service**. The objective is to cause `url-anvil` to fail or become unresponsive as quickly and efficiently as possible.
-*   **Scoring:** Your score will be based on metrics from **`url-anvil`**, specifically those influenced by **your crashing script application**. This could include:
-    *   The speed at which you can induce a failure in `url-anvil`.
-    *   Metrics from `url-anvil` (like error rates or downtime) will be used to *verify* the crash.
+*   **Goal:** To build a resilient application that can gracefully handle stress and continue to serve requests even when the target service (`url-anvil`) is unstable.
+*   **Mechanism:** Your deployed application will be subjected to a continuous stressor. Your goal is to implement architectural patterns (like load balancing, retries, circuit breakers, etc.) to ensure that your application can continue to interact with `url-anvil` and that `url-anvil` can handle as many requests as possible.
+*   **Scoring:** Your score is based on the **total number of requests handled** by `url-anvil` while your solution is active. A solution that keeps `url-anvil` available and handling requests, even if it's slow or periodically unavailable, will score higher than a solution that allows `url-anvil` to become unresponsive and stay down.
 *   **Fairness:** `url-anvil` provides a consistent, known target for all participants.
 
 #### 2. Robust Service Challenge
@@ -160,7 +158,7 @@ The SRE Chaos Challenge features three distinct challenges, each designed to tes
 #### 3. Longest Upkeep Challenge
 
 *   **Goal:** To build the most resilient and highly available service that can withstand continuous, aggressive stress and maintain uptime for the longest duration.
-*   **Mechanism:** You will deploy your application, potentially implementing advanced architectural patterns like load balancing, auto-scaling, and redundancy. The platform will subject your application to a continuous, "guaranteed to crash eventually" stressor. Your application will likely interact with **`url-anvil`** as part of its workload.
+*   **Mechanism:** You will deploy your application, potentially implementing advanced architectural patterns like load balancing, auto-scaling, and redundancy. The platform will subject your application to a continuous stressor that will test its stability. Your application will likely interact with **`url-anvil`** as part of its workload.
 *   **Scoring:** Your score will be based on metrics from **`url-anvil`**, specifically those influenced by **your deployed application**. This will include:
     *   Total uptime duration of `url-anvil` under continuous stress.
     *   Time for `url-anvil` to recover from any induced failures.

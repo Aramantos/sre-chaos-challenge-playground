@@ -23,8 +23,8 @@ export class AppComponent implements OnInit {
       ]
     },
     {
-      id: 'crash-challenge',
-      name: 'Crash Script',
+      id: 'graceful-degradation',
+      name: 'Graceful Degradation',
       columns: [
         { key: 'score', header: 'Score' }
       ]
